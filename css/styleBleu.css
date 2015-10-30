@@ -1,0 +1,24 @@
+#zone_chat strong {
+	color: #495ac7 !important;
+    border-color: #495ac7 !important;
+}
+#gauche {
+	border-color: #495ac7 !important;
+    color: #404040 !important;
+    background-color: #9ed2ff !important;
+}
+.droite {
+	border-color: #495ac7 !important;
+    color: #404040 !important;
+    background-color: #9ed2ff !important;
+}
+#envoi_message {
+	background-color: #495ac7 !important;
+	color: #ffffff !important;
+}
+#message{
+	color: #495ac7 !important;
+}
+h2{
+	color: #495ac7 !important;
+}

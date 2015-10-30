@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <meta charset="utf-8" />
+        <title>Vicky Chat</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link id="link" rel="stylesheet" type="text/css" href="css/styleNorm.css">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
+    </head>
+	
+    <body>
+		<div id="canv">
+			<canvas id="paper" width="2000px" height="10000px">
+			Your browser needs to support canvas for this to work!
+			</canvas>	
+			<div id="cursors">
+			<!-- The mouse pointers will be created here -->
+			</div>
+		</div>
+		<div id="all">
+			<div id="droite">
+				<div class="droite">
+					<center><h2>Utilisateurs :</h2></center>
+					
+					<div id="zone_util">
+					
+					</div>
+				</div>
+				<div class="droite">
+					<center><h2>Thèmes :</h2></center>
+					<div id="allColor">
+						<div id="styleNorm"></div>
+						<div id="styleBleu"></div>
+						<div id="styleRouge"></div>
+						<div id="styleVert"></div>
+						<div id="styleHalloween"></div>
+						<div id="styleOrange"></div>
+						<div id="styleRose"></div>
+						<div id="styleMatrix"></div>
+						<div id="styleElisath"></div>
+						<div id="stylePSG"></div>
+						<div id="styleFF7"></div>
+					</div>
+				</div>	
+			</div>
+			<div id="gauche">
+				<div>
+					<div id="paperGauche">
+						<img id='avatar' src="" height="100" width="100">
+						<h2 id="h">-</h2>
+					</div>
+				</div>
+				<form action="/" method="post" id="formulaire_chat">
+					<textarea name="message" id="message" placeholder="Votre message..."></textarea>
+					<input type="submit" id="envoi_message" value="Envoyer" />
+				</form>
+				<div id="zone_client_ecrit">
+					En train d'écrire :
+				</div>
+				<div id="zone_chat">
+					
+				</div>
+			</div>
+		</div>
+		<script>
+		//<input type="text" name="message" id="message" placeholder="Votre message..." autofocus />
+			var d0 = document.getElementById('all');
+			var d2 = document.getElementById('droite');
+			var d1 = document.getElementById('gauche');
+			var d3 = document.getElementById('message');
+			var d4 = document.getElementById('envoi_message');
+			var d1width = (parseInt(parseInt(getComputedStyle(d0,null).width,10)*0.75,10) - 60);
+			var d2width = (parseInt(parseInt(getComputedStyle(d0,null).width,10)*0.25,10) - 10);
+			d1.style.width = d1width+"px";
+			d2.style.width = d2width+"px";
+			d3.style.width = (d1width - parseInt(d4.offsetWidth,10) - 20)+"px";
+		</script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+			$('#styleNorm').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleNorm.css');
+				createCookie("style","styleNorm",356);
+				/*alert(
+				'dw '+$(document).width()+'\n'+   // returns height of browser viewport
+				'dh '+$(document).height()+'\n'+ // returns height of HTML document
+				'ww '+$(window).width()+'\n'+   // returns width of browser viewport
+				'wh '+$(window).height() // returns width of HTML document
+				);*/
+			});
+			$('#styleBleu').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleBleu.css');
+				createCookie("style","styleBleu",356);
+			});
+			$('#styleRouge').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleRouge.css');
+				createCookie("style","styleRouge",356);
+			});
+			$('#styleVert').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleVert.css');
+				createCookie("style","styleVert",356);
+			});
+			$('#styleOrange').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleOrange.css');
+				createCookie("style","styleOrange",356);
+			});
+			$('#styleRose').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleRose.css');
+				createCookie("style","styleRose",356);
+			});
+			$('#styleMatrix').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleMatrix.css');
+				createCookie("style","styleMatrix",356);
+			});
+			$('#styleElisath').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleElisath.css');
+				createCookie("style","styleElisath",356);
+			});
+			$('#styleFF7').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleFF7.css');
+				createCookie("style","styleFF7",356);
+			});
+			$('#stylePSG').click(function(event) {
+				$('link[id="link"]').attr('href','css/stylePSG.css');
+				createCookie("style","stylePSG",356);
+			});
+			$('#styleHalloween').click(function(event) {
+				$('link[id="link"]').attr('href','css/styleHalloween.css');
+				createCookie("style","styleHalloween",356);
+			});
+		
+			$('#message').keydown(function(event) {
+				if (event.keyCode == 13 && ! event.shiftKey) {
+					$(this.form).submit()
+					return false;
+				 }
+			});
+			
+            // Connexion à socket.io
+            var socket = io.connect('http://192.168.1.12:7777');
+			
+			var pseudo = readCookie("pseudo");
+			
+			var url = readCookie("image");
+			
+			$('link[id="link"]').attr('href','css/'+readCookie("style")+'.css');
+			
+			if(pseudo == null || url == null){
+				// On demande le pseudo
+				pseudo = prompt('Quel est votre pseudo ?');
+				
+				//on demande le liens image
+				url = prompt('URL d\'une image :');
+				
+				if(!pseudo)pseudo="Unknow";
+					
+				if(!url)url="http://www.crazyjack.fr/wp-content/uploads/Unknown-Cover.png"
+				
+				//on créer les cookies
+				createCookie("style","styleNorm",356);
+				createCookie("pseudo",pseudo,356);
+				createCookie("image",url,356);
+			}
+			
+			function keyupORchange() {
+				var message = $('#message').val();
+				if(message!=""){
+					socket.emit('client_ecrit');
+				}else{
+					socket.emit('client_ecrit_fin');
+				}
+			}
+			
+			$('#message').change(function(event) {
+				keyupORchange();
+			});
+			
+			$('#message').keyup(function(event) {
+				keyupORchange();
+			});
+			
+			socket.on('client_ecrit', function(pseudos) {
+				$('#zone_client_ecrit').html('En train d\'écrire : ');
+                for(var i=0; i<pseudos.length;i++){
+					if(pseudos[i] != pseudo)
+						$('#zone_client_ecrit').append(pseudos[i]+"... ");
+				}
+            });
+			
+			//on l'envoie au serveur et on l'affiche dans le titre
+            socket.emit('nouveau_client', pseudo,url);
+            document.title = pseudo + ' - ' + document.title;
+			$('#h').text(pseudo);
+			socket.emit('clients');
+			$('#avatar').attr('src',url);
+
+			//fonction pour informer par clignottement du titre
+			var PageTitleNotification = {
+				Vars:{
+					OriginalTitle: document.title,
+					Interval: null
+				},    
+				On: function(notification, intervalSpeed){
+					var snd = new Audio("/audio/newmessage.mp3"); // buffers automatically when created
+					snd.play();
+					var _this = this;
+					_this.Vars.Interval = setInterval(function(){
+						 document.title = (_this.Vars.OriginalTitle == document.title)
+											 ? notification
+											 : _this.Vars.OriginalTitle;
+					}, (intervalSpeed) ? intervalSpeed : 1000);
+				},
+				Off: function(){
+					clearInterval(this.Vars.Interval);
+					document.title = this.Vars.OriginalTitle;   
+				}
+			}
+			
+            // Quand on reçoit un message, on l'insère dans la page
+            socket.on('message', function(data) {
+                insereMessage(data.pseudo, data.message, data.date);
+				if(document.body.className == 'blurred'){
+					PageTitleNotification.Off();
+					PageTitleNotification.On(data.pseudo + " a écrit un message");
+				}
+            });
+			/*var dat = new Date();
+			var dat2 = Date.now();
+			alert(dat);
+			alert(dat2);
+			alert("aaa"+dat.toLocaleTimeString());
+			//alert("aaa"+dat2.toLocaleTimeString());
+			alert("bbb"+dat.valueOf());
+			alert("bbb"+dat2.valueOf());
+			alert("ccc"+dat.toDateString());
+			alert("ccc"+dat2.toDateString());*/
+			// Quand on flood
+            socket.on('flood', function() {
+                alert("Veuillez cessez de flooder !");
+            });
+
+			//fonction pour arreter clignotement
+			function onBlur() {
+				document.body.className = 'blurred';
+			};
+			function onFocus(){
+				document.body.className = 'focused';
+				PageTitleNotification.Off();
+			};
+
+			if (/*@cc_on!@*/false) { // check for Internet Explorer
+				document.onfocusin = onFocus;
+				document.onfocusout = onBlur;
+			} else {
+				window.onfocus = onFocus;
+				window.onblur = onBlur;
+			}
+			
+            // Quand un nouveau client se connecte, on affiche l'information
+            socket.on('nouveau_client', function(pseudo,url, date) {
+                $('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a rejoint le Chat !</em></p>');
+				if(url != null){
+					$('#zone_util').prepend('<div><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+				}
+            });
+			
+			//on recoit les client deja la
+			socket.on('clients', function(pseudo,url) {
+					$('#zone_util').prepend('<div><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+            });
+			
+			socket.on('clientparti', function(pseudo, date) {
+					$('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a quitté le Chat !</em></p>');	
+					$('#zone_util').text("");
+					socket.emit('clients');
+            });
+
+            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
+            $('#formulaire_chat').submit(function () {
+                var message = $('#message').val();
+				if(message != ""){
+					socket.emit('message', message); // Transmet le message aux autres
+					//insereMessage(pseudo, message); // Affiche le message aussi sur notre page
+					$('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+				}
+                return false; // Permet de bloquer l'envoi "classique" du formulaire
+            });
+			
+			$(window).unload(function () {
+				socket.emit('client_ecrit_fin');
+				socket.emit('clientparti');
+			});
+            
+            // Ajoute un message dans la page
+            function insereMessage(pseudo, message, date) {
+				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/Fuck.png" title=":mlm:"/>');
+				message = message.replace(/&colon;MLM&colon;/g, '<img src="/emote/Fuck.gif" title=":MLM:"/>');
+				message = message.replace(/&colon;cafe&colon;/g, '<img src="/emote/cafe.png" title=":cafe:"/>');
+				message = message.replace(/&colon;CAFE&colon;/g, '<img src="/emote/cafeBig.png" title=":CAFE:"/>');
+				message = message.replace(/&colon;poop&colon;/g, '<img src="/emote/poop.png" title=":poop:"/>');
+				message = message.replace(/&colon;POOP&colon;/g, '<img src="/emote/poopBig.png" title=":POOP:"/>');
+				message = message.replace(/&colon;&rpar;/gi, '<img src="/emote/Smile.png" title=":)"/>');
+				message = message.replace(/&lt;3/gi, '<img src="/emote/Heart.png" title="<3"/>');
+				message = message.replace(/&semi;&rpar;/gi, '<img src="/emote/Wink.png" title=";)"/>');
+				message = message.replace(/&colon;s/gi, '<img src="/emote/Confused.png" title=":s"/>');
+				message = message.replace(/&colon;d|xd/gi, '<img src="/emote/Laughing.png" title=":d"/>');
+				message = message.replace(/&colon;&lpar;/gi, '<img src="/emote/Frown.png" title=":("/>');
+				message = message.replace(/&Hat;&Hat;/gi, '<img src="/emote/Grin.png" title="^^"/>');
+				message = message.replace(/&colon;o/gi, '<img src="/emote/Gasp.png" title=":o"/>');
+				message = message.replace(/&colon;p/gi, '<img src="/emote/Yuck.png" title=":p"/>');
+				if(pseudo == ""){
+					$('#zone_chat').prepend('<p><em>'+ date + " : " + message + '</em></p>');
+				}else{
+					$('#zone_chat').prepend('<p><h3><strong>' + pseudo + ' à ' + date + '</strong></h3>' + message + '</p>');
+				}
+				$('#canv').height($('#gauche').outerHeight(true)+50);
+            }
+		
+			//gestion des cookies
+			function createCookie(name,value,days) {
+				if (days) {
+					var date = new Date();
+					date.setTime(date.getTime()+(days*24*60*60*1000));
+					var expires = "; expires="+date.toGMTString();
+				}
+				else var expires = "";
+				document.cookie = name+"="+value+expires+"; path=/";
+			}
+
+			function readCookie(name) {
+				var nameEQ = name + "=";
+				var ca = document.cookie.split(';');
+				for(var i=0;i < ca.length;i++) {
+					var c = ca[i];
+					while (c.charAt(0)==' ') c = c.substring(1,c.length);
+					if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+				}
+				return null;
+			}
+
+			function eraseCookie(name) {
+				createCookie(name,"",-1);
+			}
+			/*var dat = new Date();
+			alert(dat.toISOString());
+			alert(dat.toLocaleString());
+			alert(dat.toISOString().slice(0, 19).replace('T', ' '));
+			alert(dat.toUTCString().slice(0, 19).replace('T', ' '));*/
+			//for mini draw
+			/* resize the canvas to fill browser window dynamically
+			window.addEventListener('resize', resizeCanvas, false);
+
+			function resizeCanvas() {
+					canvas.width = window.innerWidth;
+					canvas.height = window.innerHeight;
+			}
+			resizeCanvas();*/
+
+			$(function(){
+				// This demo depends on the canvas element
+				if(!('getContext' in document.createElement('canvas'))){
+					alert('Sorry, it looks like your browser does not support canvas!');
+					return false;
+				}
+
+				var doc = $(document),
+					win = $(window),
+					canvas = $('#paper'),
+					ctx = canvas[0].getContext('2d');
+									
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				//ctx.scale(canvas.width,canvas.width);
+
+				// Generate an unique ID
+				var id = Math.round($.now()*Math.random());
+
+				// A flag for drawing activity
+				var drawing = false;
+
+				var clients = {};
+				var cursors = {};
+
+				socket.on('moving', function (data) {
+
+					if(! (data.id in clients)){
+						// a new user has come online. create a cursor for them
+						cursors[data.id] = $('<div class="cursor">').appendTo('#cursors');
+					}
+
+					// Move the mouse pointer
+					cursors[data.id].css({
+						'left' : data.x,
+						'top' : data.y
+					});
+
+					// Is the user drawing?
+					if(data.drawing && clients[data.id]){
+
+						// Draw a line on the canvas. clients[data.id] holds
+						// the previous position of this user's mouse pointer
+
+						drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y);
+					}
+
+					// Saving the current client state
+					clients[data.id] = data;
+					clients[data.id].updated = $.now();
+				});
+
+				var prev = {};
+
+				canvas.on('mousedown',function(e){
+					e.preventDefault();
+					drawing = true;
+					prev.x = e.pageX;
+					prev.y = e.pageY;
+					
+					// Hide the instructions
+					//instructions.fadeOut();
+				});
+
+				doc.bind('mouseup mouseleave',function(){
+					drawing = false;
+				});
+
+				var lastEmit = $.now();
+
+				doc.on('mousemove',function(e){
+					if($.now() - lastEmit > 30 && drawing){
+						socket.emit('mousemove',{
+							'x': e.pageX,
+							'y': e.pageY,
+							'drawing': drawing,
+							'id': id
+						});
+						lastEmit = $.now();
+					}
+
+					// Draw a line for the current user's movement, as it is
+					// not received in the socket.on('moving') event above
+
+					if(drawing){
+						
+						drawLine(prev.x, prev.y, e.pageX, e.pageY);
+
+						prev.x = e.pageX;
+						prev.y = e.pageY;
+					}
+				});
+
+				// Remove inactive clients after 10 seconds of inactivity
+				setInterval(function(){
+
+					for(ident in clients){
+						if($.now() - clients[ident].updated > 10000){
+
+							// Last update was more than 10 seconds ago.
+							// This user has probably closed the page
+
+							cursors[ident].remove();
+							delete clients[ident];
+							delete cursors[ident];
+						}
+					}
+
+				},10000);
+				function drawLine(fromx, fromy, tox, toy){
+					/*ctx.moveTo(fromx-canvas.offset().left, fromy-canvas.offset().top);
+					ctx.lineTo(tox-canvas.offset().left, toy-canvas.offset().top);*/
+					//ctx.moveTo(-canvas.offset().left, -canvas.offset().top);
+					ctx.moveTo(fromx, fromy);
+					ctx.lineTo(tox, toy);
+					ctx.strokeStyle = $("h2").css("color");
+					ctx.lineWidth = 1;
+					ctx.stroke();
+				}
+			});
+			
+			function harlem() 
+			{ 
+			  javascript:(function(){function c(){var e=document.createElement("link");e.setAttribute("type","text/css");e.setAttribute("rel","stylesheet");
+			  e.setAttribute("href",f);e.setAttribute("class",l);document.body.appendChild(e)}function h(){var e=document.getElementsByClassName(l);for(var t=0;
+			  t<e.length;t++){document.body.removeChild(e[t])}}function p(){var e=document.createElement("div");e.setAttribute("class",a);document.body.appendChild(e);
+			  setTimeout(function(){document.body.removeChild(e)},100)}function d(e){return{height:e.offsetHeight,width:e.offsetWidth}}function v(i){var s=d(i);
+			  return s.height>e&&s.height<n&&s.width>t&&s.width<r}function m(e){var t=e;var n=0;while(!!t){n+=t.offsetTop;t=t.offsetParent}return n}
+			  function g(){var e=document.documentElement;if(!!window.innerWidth){return window.innerHeight}else if(e&&!isNaN(e.clientHeight)){return e.clientHeight}
+			  return 0}function y(){if(window.pageYOffset){return window.pageYOffset}return Math.max(document.documentElement.scrollTop,document.body.scrollTop)}
+			  function E(e){var t=m(e);return t>=w&&t<=b+w}function S(){var e=document.createElement("audio");e.setAttribute("class",l);e.src=i;e.loop=false;
+			  e.addEventListener("canplay",function(){setTimeout(function(){x(k)},500);setTimeout(function(){N();p();for(var e=0;e<O.length;e++){T(O[e])}},15500)},true);
+			  e.addEventListener("ended",function(){N();h()},true);e.innerHTML=" <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";
+			  document.body.appendChild(e);e.play()}function x(e){e.className+=" "+s+" "+o}function T(e){e.className+=" "+s+" "+u[Math.floor(Math.random()*u.length)]}
+			  function N(){var e=document.getElementsByClassName(s);var t=new RegExp("\\b"+s+"\\b");for(var n=0;n<e.length;){e[n].className=e[n].className.replace(t,"")}}var e=30;
+			  var t=30;var n=350;var r=350;var i="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";var s="mw-harlem_shake_me";var o="im_first";
+			  var u=["im_drunk","im_baked","im_trippin","im_blown"];var a="mw-strobe_light";var f="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";
+			  var l="mw_added_css";var b=g();var w=y();var C=document.getElementsByTagName("*");var k=null;for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){if(E(A)){k=A;break}}}
+			  if(A===null){console.warn("Could not find a node of the right size. Please try a different page.");return}c();S();var O=[];for(var L=0;L<C.length;L++){var A=C[L];
+			  if(v(A)){O.push(A)}}})()
+			}
+			
+			socket.on('harlem', function() {
+					harlem();
+            });
+			
+			socket.on('wizz', function() {
+					var snd = new Audio("/audio/hey.mp3"); // buffers automatically when created
+					snd.play();
+					$( "#all" ).effect( "shake", {times:4, distance:50, direction:"left"}, 500  );
+					//$( "#all" ).effect( "shake", {times:4, distance:50, direction:"up"}, 500  );
+					//$( "#all" ).effect( "shake", {times:2, distance:50, direction:"left"}, 500  );
+            });
+			
+        </script>
+    </body>
+</html>

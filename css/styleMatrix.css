@@ -1,0 +1,63 @@
+#zone_chat strong {
+	color: #909691 !important;
+    border-color: #909691 !important;
+}
+#gauche {
+	border-color: #00ff11 !important;
+    color: #00ff11 !important;
+    background-color: #000000 !important;
+}
+.droite {
+	border-color: #00ff11 !important;
+    color: #00ff11 !important;
+    background-color: #000000 !important;
+}
+#envoi_message {
+	background-color: #00ff11 !important;
+	color: #000000 !important;
+}
+#message{
+	color: #909691 !important;
+}
+h2{
+	color: #909691 !important;
+}
+
+
+
+
+/*
+#gauche {
+    background-color: #000000;
+    color: #00ff11;
+    border-color: #00ff11;
+}
+
+#envoi_message {
+    color: #000000;
+    background-color: #00ff11;
+}
+
+#gauche div {
+    color: #00ff11;
+}
+
+#h {
+    color: #909691;
+}
+
+#zone_chat p strong {
+    color: #909691;
+    border-color: #909691;
+}
+
+div.droite {
+    color: #00ff11;
+    background-color: #000000;
+    border-color: #00ff11;
+}
+
+div.droite center h2 {
+    color: #909691;
+}
+*/

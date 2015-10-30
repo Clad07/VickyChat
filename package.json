@@ -1,0 +1,13 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "dependencies": {
+    "ent": "~0.1.0",
+    "express": "~3.3.4",
+    "moment": "^2.10.2",
+    "mysql": "~2.5.4",
+    "socket.io": "~0.9.16"
+  },
+  "author": "Clad07",
+  "description": "Un super Chat temps réel avec socket.io"
+}
