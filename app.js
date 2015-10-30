@@ -106,14 +106,14 @@ io.sockets.on('connection', function (socket, pseudo) {
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
 		//recherche dans la BDD
-		db.connect('localhost','Elisath','Elisath','nodejs');
-		var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25";
-		db.executeSelectQuery(sqlSelect,processResult);
+				/*db.connect('localhost','Elisath','Elisath','nodejs');
+				var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25";
+				db.executeSelectQuery(sqlSelect,processResult);*/
 		//ajout dans la BDD
 		/*var message = pseudo + ' a rejoint le Chat !';
 		var sqlInsert = "INSERT INTO historiquechat (pseudo,text,date) VALUES('" + '' + "','" + message + "','"+dat+"') ";
 		db.executeInsertQuery(sqlInsert);*/
-		db.close();
+				//db.close();
     });
 	
 	socket.on('client_ecrit', function(){
@@ -209,10 +209,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 					message = ent.encode(message);
 					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
 					//ajout dans la BDD
-					db.connect('localhost','Elisath','Elisath','nodejs');
+					/*db.connect('localhost','Elisath','Elisath','nodejs');
 					var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
 					db.executeInsertQuery(sqlInsert);
-					db.close();
+					db.close();*/
 					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
 				}else{
 					for(var i=0;i<10;i++)
@@ -262,8 +262,8 @@ io.sockets.on('close', function (socket, pseudo) {
 	
 });
 
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "192.168.1.12";
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port = process.env.OPENSHIFT_NODEJS_PORT || 7777;
-server.listen( port, ipaddress, function() {
+server.listen( port, function() {
     console.log((new Date()) + ' Server is listening on port 7777');
 });
