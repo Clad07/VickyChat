@@ -7,6 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<link id="link" rel="stylesheet" type="text/css" href="css/styleNorm.css">
         <meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
+		<link rel="icon" type="image/png" href="image/logo.png" />
     </head>
 	
     <body>
@@ -145,7 +146,10 @@
 			
 			var url = readCookie("image");
 			
-			$('link[id="link"]').attr('href','css/'+readCookie("style")+'.css');
+			var cookie = readCookie("style");
+			
+			if(cookie != null) 
+				$('link[id="link"]').attr('href','css/'+cookie+'.css');
 			
 			if(pseudo == null || url == null){
 				// On demande le pseudo
@@ -502,6 +506,13 @@
 			
 			socket.on('harlem', function() {
 					harlem();
+            });
+			
+			socket.on('reset', function() {
+				eraseCookie("style");
+				eraseCookie("pseudo");
+				eraseCookie("image");
+				window.location.reload();
             });
 			
 			socket.on('wizz', function() {
