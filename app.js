@@ -137,7 +137,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 					}
 					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 				});
-			}
+			});
 		}
     });
 	
