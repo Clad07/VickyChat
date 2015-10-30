@@ -124,7 +124,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				.query('SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25;')
+				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25;")
 				.on('row', processResult);
 			});
 		}
