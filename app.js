@@ -103,7 +103,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		//fonction transmission histo receuili
 		var processResult = function(row) {
 			console.log(row);
-			console.log("\n\n\n".(row.length-1)."\n\n\n");
+			console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")/*new Date(row[key].date).toLocaleTimeString()*/});
