@@ -4,11 +4,13 @@ var app = require('express')(),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
     fs = require('fs');
 	db = require('./db.js');
+	pg = require('pg');
 	moment = require('moment');
 	
 var pseudos = [];
 var urls =[];
 var pseudosWriting = [];
+var bdd = 'pgsql';
 
 //variable for flood
 var rating, limit, interval;
@@ -106,14 +108,28 @@ io.sockets.on('connection', function (socket, pseudo) {
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
 		//recherche dans la BDD
-				/*db.connect('localhost','Elisath','Elisath','nodejs');
-				var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25";
-				db.executeSelectQuery(sqlSelect,processResult);*/
-		//ajout dans la BDD
-		/*var message = pseudo + ' a rejoint le Chat !';
-		var sqlInsert = "INSERT INTO historiquechat (pseudo,text,date) VALUES('" + '' + "','" + message + "','"+dat+"') ";
-		db.executeInsertQuery(sqlInsert);*/
-				//db.close();
+		if(bdd == 'mysql'){
+			db.connect('localhost','Elisath','Elisath','nodejs');
+			var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25";
+			db.executeSelectQuery(sqlSelect,processResult);
+			//ajout dans la BDD
+			/*var message = pseudo + ' a rejoint le Chat !';
+			var sqlInsert = "INSERT INTO historiquechat (pseudo,text,date) VALUES('" + '' + "','" + message + "','"+dat+"') ";
+			db.executeInsertQuery(sqlInsert);*/
+			db.close();
+		}
+		if(bdd == 'pgsql'){
+			pg.connect(process.env.DATABASE_URL, function(err, client) {
+			  if (err) throw err;
+			  console.log('Connected to postgres! Getting schemas...');
+
+			  client
+				.query('SELECT table_schema,table_name FROM information_schema.tables;')
+				.on('row', function(row) {
+				  console.log(JSON.stringify(row));
+				});
+			});
+		}
     });
 	
 	socket.on('client_ecrit', function(){
@@ -213,10 +229,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 					message = ent.encode(message);
 					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
 					//ajout dans la BDD
-					/*db.connect('localhost','Elisath','Elisath','nodejs');
-					var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
-					db.executeInsertQuery(sqlInsert);
-					db.close();*/
+					if(bdd == 'mysql'){
+						db.connect('localhost','Elisath','Elisath','nodejs');
+						var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
+						db.executeInsertQuery(sqlInsert);
+						db.close();
+					}
 					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
 				}else{
 					for(var i=0;i<10;i++)
