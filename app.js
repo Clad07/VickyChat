@@ -135,8 +135,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 						console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 						socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")/*new Date(row[key].date).toLocaleTimeString()*/});
 					}
-					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss")););
+					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 				});
+			}
 		}
     });
 	
