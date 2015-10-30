@@ -102,6 +102,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		socket.set('url', url);	
 		//fonction transmission histo receuili
 		var processResult = function(row) {
+			console.log(row);
 			for(var key = row.length-1; key>=0; key--){
 				console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")/*new Date(row[key].date).toLocaleTimeString()*/});
