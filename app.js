@@ -262,8 +262,8 @@ io.sockets.on('close', function (socket, pseudo) {
 	
 });
 
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-var port = process.env.OPENSHIFT_NODEJS_PORT || 7777;
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "23.21.97.86";
+var port = process.env.OPENSHIFT_NODEJS_PORT || 80;
 server.listen( port, function() {
     console.log((new Date()) + ' Server is listening on port 7777');
 });
