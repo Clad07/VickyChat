@@ -130,7 +130,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25;")
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', row);
+					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format("HH:mm:ss")});
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
