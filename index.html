@@ -139,11 +139,6 @@
 				 }
 			});
 			
-            // Connexion à socket.io
-			var ip = 'http://vickychat.herokuapp.com';
-			//var ip = 'http://192.168.1.12:5000';
-            var socket = io.connect(ip);
-			
 			var pseudo = readCookie("pseudo");
 			
 			var url = readCookie("image");
@@ -169,6 +164,11 @@
 				createCookie("pseudo",pseudo,356);
 				createCookie("image",url,356);
 			}
+			
+			// Connexion à socket.io
+			var ip = 'http://vickychat.herokuapp.com';
+			//var ip = 'http://192.168.1.12:5000';
+            var socket = io.connect(ip);
 			
 			function keyupORchange() {
 				var message = $('#message').val();
