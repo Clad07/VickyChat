@@ -249,7 +249,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 						  console.log('Connected to postgres! Getting schemas...');
 
 						  client
-							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
+							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ")
 						});
 					}
 					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
