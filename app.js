@@ -75,7 +75,8 @@ app.use(function(req, res, next){
 });
 
 io.sockets.on('connection', function (socket, pseudo) {
-
+	console.log('Openning for ' + pseudo);
+	
 	socket.on('clients',function(){
 		//envoi des utilisateurs déja présent
 		for(var i=0;i<pseudos.length;i++){
@@ -102,8 +103,8 @@ io.sockets.on('connection', function (socket, pseudo) {
 		socket.set('url', url);	
 		//fonction transmission histo receuili
 		var processResult = function(row) {
-			console.log(row);
-			console.log("\n\n\n" + (row.length-1) + "\n\n\n");
+			//console.log(row);
+			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")/*new Date(row[key].date).toLocaleTimeString()*/});
@@ -127,7 +128,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25;")
+				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id LIMIT 25;")
 				.on('row', function(row) {
 					//console.log(row);
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format("HH:mm:ss")});
@@ -298,12 +299,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 });
 
 io.sockets.on('close', function (socket, pseudo) {
-	
+	console.log('Closing for ' + pseudo);
 });
 
 //var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "23.21.97.86";//23.21.97.86
 //var port = process.env.OPENSHIFT_NODEJS_PORT || 80;
 app.set('port', (process.env.PORT || 5000));
 server.listen( app.get('port'), function() {
-    console.log((new Date()) + ' Server is listening on port 7777');
+    console.log((new Date()) + ' Server is listening ');
 });
