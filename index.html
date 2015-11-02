@@ -294,11 +294,15 @@
                 return false; // Permet de bloquer l'envoi "classique" du formulaire
             });
 			
-			$(window).unload(function () {
+			$(window).on('beforeunload',function () {
+				
 				socket.emit('client_ecrit_fin');
 				socket.emit('clientparti');
+				//return "Bye now!";
 			});
-            
+			
+			
+			
             // Ajoute un message dans la page
             function insereMessage(pseudo, message, date) {
 				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/fuck.png" title=":mlm:"/>');
