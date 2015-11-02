@@ -10,7 +10,7 @@ var app = require('express')(),
 var pseudos = [];
 var urls =[];
 var pseudosWriting = [];
-var bdd = 'mysql';
+var bdd = 'pgsql';
 
 //variable for flood
 var rating, limit, interval;
