@@ -131,6 +131,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('row', function(row) {
 					//console.log(row);
 					socket.emit('message', row);
+					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
 					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
@@ -241,6 +242,15 @@ io.sockets.on('connection', function (socket, pseudo) {
 						var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
 						db.executeInsertQuery(sqlInsert);
 						db.close();
+					}
+					if(bdd == 'pgsql'){
+						pg.connect(process.env.DATABASE_URL, function(err, client) {
+						  if (err) throw err;
+						  console.log('Connected to postgres! Getting schemas...');
+
+						  client
+							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
+						});
 					}
 					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
 				}else{
