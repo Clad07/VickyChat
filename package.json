@@ -2,12 +2,12 @@
   "name": "app",
   "version": "0.1.0",
   "dependencies": {
-    "ent": "0.1.0",
-    "express": "3.3.4",
-    "moment": "2.10.2",
-    "mysql": "2.5.4",
+    "ent": "~0.1.0",
+    "express": "~3.3.4",
+    "moment": "^2.10.2",
+    "mysql": "~2.5.4",
     "pg": "4.4.3",
-    "socket.io": "1.2.1"
+    "socket.io": "~1.2.1"
   },
   "engines": {
     "node": "5.0.0"
