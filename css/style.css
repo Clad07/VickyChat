@@ -2,6 +2,11 @@ html {
     background: white url(/image/background.png) repeat !important;
 	/*overflow: hidden !important;*/
 }
+
+#content #loader{
+	display: none;
+}
+
 #canv{
 	position: absolute !important;
 	display: block !important;

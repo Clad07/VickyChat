@@ -550,7 +550,7 @@
 				// on initialise ajaxready à true au premier chargement de la fonction
 				$(window).data('ajaxready', true);
 
-				$('#content').append('<div id="loader"><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></div>');
+				$('#content').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
 
 				var deviceAgent = navigator.userAgent.toLowerCase();
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
@@ -582,11 +582,15 @@
 
 						$('#content #loader').fadeOut(400);			
 						});*/
-						$(window).data('ajaxready', true);			
-						$('#content #loader').fadeOut(400);	
+						
 					}
 				});
 			};
+			
+			socket.on('affiche_plus_fin', function() {
+				$(window).data('ajaxready', true);			
+				$('#content #loader').fadeOut(400);		
+            });
 			
 			infiniteScroll();
 			

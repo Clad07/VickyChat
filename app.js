@@ -155,7 +155,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
 			}
-			//socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
+			socket.emit('affiche_plus_fin');
 		}
 		//recherche dans la BDD
 		if(bdd == 'mysql'){
@@ -180,9 +180,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
 					//change row because message is call text, etc ...
 				});
-				/*.on('end', function(){
-					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
-				});*/
+				.on('end', function(){
+					socket.emit('affiche_plus_fin');
+				});
 			});
 		}
 	});
