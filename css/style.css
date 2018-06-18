@@ -3,10 +3,6 @@ html {
 	/*overflow: hidden !important;*/
 }
 
-#content #loader{
-	display: none;
-}
-
 #canv{
 	position: absolute !important;
 	display: block !important;

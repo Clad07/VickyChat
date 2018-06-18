@@ -551,7 +551,9 @@
 				$(window).data('ajaxready', true);
 
 				$('#content').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
-
+				
+				$('#content #loader').fadeOut(400);	
+				
 				var deviceAgent = navigator.userAgent.toLowerCase();
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
 
