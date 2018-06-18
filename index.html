@@ -544,7 +544,7 @@
 				return new Promise(resolve => setTimeout(resolve, ms));
 			}
 			
-			async function infiniteScroll(){
+			function infiniteScroll(){
 				var offset = 1;
 
 				// on initialise ajaxready à true au premier chargement de la fonction
@@ -556,35 +556,35 @@
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
 
 				$(window).scroll(function() {
-				// On teste si ajaxready vaut false, auquel cas on stoppe la fonction
-				if ($(window).data('ajaxready') == false) return;
-						
-				if(($(window).scrollTop() + $(window).height()) == $(document).height()
-				|| agentID && ($(window).scrollTop() + $(window).height()) + 150 > $(document).height()) {
-				  // lorsqu'on commence un traitement, on met ajaxready à false
-				  $(window).data('ajaxready', false);
-						
-				  $('#content #loader').fadeIn(400);
-				  
-				  socket.emit('affiche_plus', offset);
-				  offset++;
-				  await sleep(2000);
-				  /*$.get('more.php?' + offset, function(data){
-					if (data != '') {
-					  $('#content #loader').before(data);
-					  $('#content .hidden').fadeIn(400);
-					  offset+= 10;
-					  // une fois tous les traitements effectués,
-					  // on remet ajaxready à false 
-					  // afin de pouvoir rappeler la fonction
-					  $(window).data('ajaxready', true);
+					// On teste si ajaxready vaut false, auquel cas on stoppe la fonction
+					if ($(window).data('ajaxready') == false) return;
+
+					if(($(window).scrollTop() + $(window).height()) == $(document).height()
+					|| agentID && ($(window).scrollTop() + $(window).height()) + 150 > $(document).height()) {
+						// lorsqu'on commence un traitement, on met ajaxready à false
+						$(window).data('ajaxready', false);
+
+						$('#content #loader').fadeIn(400);
+
+						socket.emit('affiche_plus', offset);
+						offset++;
+						//await sleep(2000);
+						/*$.get('more.php?' + offset, function(data){
+						if (data != '') {
+						$('#content #loader').before(data);
+						$('#content .hidden').fadeIn(400);
+						offset+= 10;
+						// une fois tous les traitements effectués,
+						// on remet ajaxready à false 
+						// afin de pouvoir rappeler la fonction
+						$(window).data('ajaxready', true);
+						}
+
+						$('#content #loader').fadeOut(400);			
+						});*/
+						$(window).data('ajaxready', true);			
+						$('#content #loader').fadeOut(400);	
 					}
-								
-					$('#content #loader').fadeOut(400);			
-				  });*/
-				$(window).data('ajaxready', true);			
-				$('#content #loader').fadeOut(400);	
-				}
 				});
 			};
 			
