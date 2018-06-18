@@ -117,7 +117,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		//recherche dans la BDD
 		if(bdd == 'mysql'){
 			db.connect('localhost','Elisath','Elisath','nodejs');
-			var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg";
+			var sqlSelect = "SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg;
 			//var sqlSelect = "SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC";
 			db.executeSelectQuery(sqlSelect,processResult);
 			//ajout dans la BDD
