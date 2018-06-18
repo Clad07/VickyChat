@@ -45,7 +45,7 @@ body{
 }
 #zone_chat{
 	/*position: relative;*/
-	white-space: pre !important;
+	white-space: pre-wrap !important;
 	word-wrap: break-word !important;
 }
 #all {

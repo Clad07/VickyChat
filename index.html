@@ -62,7 +62,7 @@
 				<div id="zone_chat">
 					
 				</div>
-				<div class="content">
+				<div id="content">
 				</div>
 			</div>
 		</div>
@@ -540,7 +540,11 @@
 					//$( "#all" ).effect( "shake", {times:2, distance:50, direction:"left"}, 500  );
             });
 			
-			function infiniteScroll(){
+			function sleep(ms) {
+				return new Promise(resolve => setTimeout(resolve, ms));
+			}
+			
+			async function infiniteScroll(){
 				var offset = 1;
 
 				// on initialise ajaxready à true au premier chargement de la fonction
@@ -564,6 +568,7 @@
 				  
 				  socket.emit('affiche_plus', offset);
 				  offset++;
+				  await sleep(2000);
 				  /*$.get('more.php?' + offset, function(data){
 					if (data != '') {
 					  $('#content #loader').before(data);
