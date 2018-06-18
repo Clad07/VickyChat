@@ -227,7 +227,7 @@
 			
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.message, data.date);
+                insereMessage(data.pseudo, data.message, data.date, data.debut);
 				if(document.body.className == 'blurred'){
 					PageTitleNotification.Off();
 					PageTitleNotification.On(data.pseudo + " a écrit un message");
@@ -305,7 +305,7 @@
 			
 			
             // Ajoute un message dans la page
-            function insereMessage(pseudo, message, date) {
+            function insereMessage(pseudo, message, date, debut) {
 				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/fuck.png" title=":mlm:"/>');
 				message = message.replace(/&colon;MLM&colon;/g, '<img src="/emote/fuck.gif" title=":MLM:"/>');
 				message = message.replace(/&colon;cafe&colon;/g, '<img src="/emote/cafe.png" title=":cafe:"/>');
@@ -322,9 +322,17 @@
 				message = message.replace(/&colon;o/gi, '<img src="/emote/Gasp.png" title=":o"/>');
 				message = message.replace(/&colon;p/gi, '<img src="/emote/Yuck.png" title=":p"/>');
 				if(pseudo == ""){
-					$('#zone_chat').prepend('<p><em>'+ date + " : " + message + '</em></p>');
+					if(debut){
+						$('#zone_chat').prepend('<p><em>'+ date + " : " + message + '</em></p>');
+					}else{
+						$('#zone_chat').append('<p><em>'+ date + " : " + message + '</em></p>');
+					}
 				}else{
-					$('#zone_chat').prepend('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
+					if(debut){
+						$('#zone_chat').prepend('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
+					}else{
+						$('#zone_chat').append('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
+					}
 				}
 				$('#canv').height($('#gauche').outerHeight(true)+50);
             }
