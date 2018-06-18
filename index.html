@@ -323,7 +323,7 @@
 				if(pseudo == ""){
 					$('#zone_chat').prepend('<p><em>'+ date + " : " + message + '</em></p>');
 				}else{
-					$('#zone_chat').prepend('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p>' + message + '</p>');
+					$('#zone_chat').prepend('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
 				}
 				$('#canv').height($('#gauche').outerHeight(true)+50);
             }

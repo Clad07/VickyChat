@@ -37,11 +37,10 @@ body{
 	padding-right: 5px !important;
 }
 #zone_chat h3{
-	position: relative;
 	font-size: 21px !important;
 	margin-bottom: 5px;
 }
-#zone_chat p{
+#zone_chat span{
 	position: relative;
 }
 #zone_chat{
