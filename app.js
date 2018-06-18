@@ -110,7 +110,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
-				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut:false});
+				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
 			}
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
@@ -136,7 +136,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut:false});
+					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
@@ -153,7 +153,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
-				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut:false});
+				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
 			}
 			//socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
@@ -177,7 +177,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut:false});
+					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
 					//change row because message is call text, etc ...
 				});
 				/*.on('end', function(){
@@ -244,13 +244,13 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut:true});
+				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
 				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut:true});
+				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/harlem'){
 				//fait trembler lecran !		
@@ -270,8 +270,8 @@ io.sockets.on('connection', function (socket, pseudo) {
 						socket.broadcast.emit('wizz');
 						message = pseudo+" a envoyé un wizz !";
 						message = ent.encode(message);
-						socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut:true});
-						socket.broadcast.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut:true});
+						socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+						socket.broadcast.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 					}else{
 						//for(var i=0;i<10;i++)
 							addRatingEntry(pseudo);
@@ -285,7 +285,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				if(evalRating(pseudo)){
 					addRatingEntry(pseudo);
 					message = ent.encode(message);
-					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("msgDateFormat"), debut:true});
+					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("msgDateFormat"), debut: true});
 					//ajout dans la BDD
 					if(bdd == 'mysql'){
 						db.connect('localhost','Elisath','Elisath','nodejs');
@@ -302,7 +302,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ")
 						});
 					}
-					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format(msgDateFormat), debut:true});
+					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format(msgDateFormat), debut: true});
 				}else{
 					//for(var i=0;i<10;i++)
 						addRatingEntry(pseudo);

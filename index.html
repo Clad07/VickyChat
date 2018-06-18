@@ -59,8 +59,10 @@
 				<div id="zone_client_ecrit">
 					En train d'écrire :
 				</div>
-				<div id="zone_chat" class="content">
+				<div id="zone_chat">
 					
+				</div>
+				<div class="content">
 				</div>
 			</div>
 		</div>
@@ -544,7 +546,7 @@
 				// on initialise ajaxready à true au premier chargement de la fonction
 				$(window).data('ajaxready', true);
 
-				$('#content').append('<div id="loader"><img src="/img/ajax-loader.gif" alt="loader ajax"></div>');
+				$('#content').append('<div id="loader"><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></div>');
 
 				var deviceAgent = navigator.userAgent.toLowerCase();
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
