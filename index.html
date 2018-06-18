@@ -59,7 +59,7 @@
 				<div id="zone_client_ecrit">
 					En train d'écrire :
 				</div>
-				<div id="zone_chat">
+				<div id="zone_chat" class="content">
 					
 				</div>
 			</div>
@@ -77,6 +77,7 @@
 			d2.style.width = d2width+"px";
 			d3.style.width = (d1width - parseInt(d4.offsetWidth,10) - 20)+"px";
 		</script>
+		<script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
         <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="/socket.io/socket.io.js"></script>
@@ -528,6 +529,51 @@
 					//$( "#all" ).effect( "shake", {times:4, distance:50, direction:"up"}, 500  );
 					//$( "#all" ).effect( "shake", {times:2, distance:50, direction:"left"}, 500  );
             });
+			
+			function infiniteScroll(){
+				var offset = 1;
+
+				// on initialise ajaxready à true au premier chargement de la fonction
+				$(window).data('ajaxready', true);
+
+				$('#content').append('<div id="loader"><img src="/img/ajax-loader.gif" alt="loader ajax"></div>');
+
+				var deviceAgent = navigator.userAgent.toLowerCase();
+				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
+
+				$(window).scroll(function() {
+				// On teste si ajaxready vaut false, auquel cas on stoppe la fonction
+				if ($(window).data('ajaxready') == false) return;
+						
+				if(($(window).scrollTop() + $(window).height()) == $(document).height()
+				|| agentID && ($(window).scrollTop() + $(window).height()) + 150 > $(document).height()) {
+				  // lorsqu'on commence un traitement, on met ajaxready à false
+				  $(window).data('ajaxready', false);
+						
+				  $('#content #loader').fadeIn(400);
+				  
+				  socket.emit('affiche_plus', offset);
+				  offset++;
+				  /*$.get('more.php?' + offset, function(data){
+					if (data != '') {
+					  $('#content #loader').before(data);
+					  $('#content .hidden').fadeIn(400);
+					  offset+= 10;
+					  // une fois tous les traitements effectués,
+					  // on remet ajaxready à false 
+					  // afin de pouvoir rappeler la fonction
+					  $(window).data('ajaxready', true);
+					}
+								
+					$('#content #loader').fadeOut(400);			
+				  });*/
+				$(window).data('ajaxready', true);			
+				$('#content #loader').fadeOut(400);	
+				}
+				});
+			};
+			
+			infiniteScroll();
 			
         </script>
     </body>

@@ -11,6 +11,8 @@ var pseudos = [];
 var urls =[];
 var pseudosWriting = [];
 var bdd = 'pgsql';
+var msgDateFormat = "HH:mm:ss";
+var nbMsg = 10;
 
 //variable for flood
 var rating, limit, interval;
@@ -108,14 +110,14 @@ io.sockets.on('connection', function (socket, pseudo) {
 			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
-				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")/*new Date(row[key].date).toLocaleTimeString()*/});
+				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/});
 			}
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
 		//recherche dans la BDD
 		if(bdd == 'mysql'){
 			db.connect('localhost','Elisath','Elisath','nodejs');
-			var sqlSelect = "SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25) s ORDER BY s.id ASC";
+			var sqlSelect = "SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC";
 			db.executeSelectQuery(sqlSelect,processResult);
 			//ajout dans la BDD
 			/*var message = pseudo + ' a rejoint le Chat !';
@@ -129,10 +131,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT 25) s ORDER BY s.id ASC")
+				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format("HH:mm:ss")});
+					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat)});
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
@@ -141,6 +143,47 @@ io.sockets.on('connection', function (socket, pseudo) {
 			});
 		}
     });
+	
+	socket.on('affiche_plus', function(offset){
+		//fonction transmission histo receuili
+		var processResult = function(row) {
+			//console.log(row);
+			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
+			for(var key = row.length-1; key>=0; key--){
+				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
+				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/});
+			}
+			//socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
+		}
+		//recherche dans la BDD
+		if(bdd == 'mysql'){
+			db.connect('localhost','Elisath','Elisath','nodejs');
+			var sqlSelect = "SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+offset*nbMsg+") s ORDER BY s.id ASC";
+			db.executeSelectQuery(sqlSelect,processResult);
+			//ajout dans la BDD
+			/*var message = pseudo + ' a rejoint le Chat !';
+			var sqlInsert = "INSERT INTO historiquechat (pseudo,text,date) VALUES('" + '' + "','" + message + "','"+dat+"') ";
+			db.executeInsertQuery(sqlInsert);*/
+			db.close();
+		}
+		if(bdd == 'pgsql'){
+			pg.connect(process.env.DATABASE_URL, function(err, client) {
+			  if (err) throw err;
+			  console.log('Connected to postgres! Getting schemas...');
+
+			  client
+				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+offset*nbMsg+") s ORDER BY s.id ASC")
+				.on('row', function(row) {
+					//console.log(row);
+					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat)});
+					//change row because message is call text, etc ...
+				});
+				/*.on('end', function(){
+					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
+				});*/
+			});
+		}
+	});
 	
 	socket.on('client_ecrit', function(){
 		//socket.get('pseudo', function (error, pseudo) {
@@ -228,7 +271,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 						socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss")});
 						socket.broadcast.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss")});
 					}else{
-						for(var i=0;i<10;i++)
+						//for(var i=0;i<10;i++)
 							addRatingEntry(pseudo);
 						socket.emit('flood');
 					}
@@ -240,7 +283,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				if(evalRating(pseudo)){
 					addRatingEntry(pseudo);
 					message = ent.encode(message);
-					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
+					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("msgDateFormat")});
 					//ajout dans la BDD
 					if(bdd == 'mysql'){
 						db.connect('localhost','Elisath','Elisath','nodejs');
@@ -257,9 +300,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ")
 						});
 					}
-					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("HH:mm:ss")});
+					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format(msgDateFormat)});
 				}else{
-					for(var i=0;i<10;i++)
+					//for(var i=0;i<10;i++)
 						addRatingEntry(pseudo);
 					socket.emit('flood');
 				}
