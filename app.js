@@ -179,7 +179,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 					//console.log(row);
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
 					//change row because message is call text, etc ...
-				});
+				})
 				.on('end', function(){
 					socket.emit('affiche_plus_fin');
 				});
