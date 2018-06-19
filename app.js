@@ -152,8 +152,8 @@ io.sockets.on('connection', function (socket, pseudo) {
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				//.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg)
-				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC")
+				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg)
+				//.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
@@ -209,8 +209,8 @@ io.sockets.on('connection', function (socket, pseudo) {
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				//.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
-				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg)+") s ORDER BY s.id ASC")
+				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
+				//.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg)+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
