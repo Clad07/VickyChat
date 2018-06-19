@@ -5,16 +5,29 @@ var app = require('express')(),
     fs = require('fs');
 	db = require('./db.js');
 	pg = require('pg');
-	//const { Client } = require('pg');
+	const { Client } = require('pg');
 	moment = require('moment');
 	
 //init postgres
+// pools will use environment variables
+// for connection information
+//const pool = new Pool()
+
 /*const client = new Client({
-  connectionString: "postgres://jlthbnkffnzbhy:mS8zWIo7alGJRYDQ3Zb8cUwCXd@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dtd7h0pdls9gb",
-  //connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  user: 'jlthbnkffnzbhy',
+  host: 'ec2-107-21-219-235.compute-1.amazonaws.com',
+  database: 'dtd7h0pdls9gb',
+  password: 'mS8zWIo7alGJRYDQ3Zb8cUwCXd',
+  port: 5432,
+  ssl : false,
 });*/
-	
+
+var db_url = process.env.DATABASE_URL || "postgres://jlthbnkffnzbhy:mS8zWIo7alGJRYDQ3Zb8cUwCXd@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dtd7h0pdls9gb";
+const client = new Client({
+  connectionString: db_url,
+  ssl: false,
+});
+
 var pseudos = [];
 var urls =[];
 var pseudosWriting = [];
@@ -136,7 +149,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			db.close();
 		}
 		if(bdd == 'pgsql'){
-			pg.connect(process.env.DATABASE_URL, function(err, client) {
+			/*pg.connect(db_url, function(err, client) {
 			  if (err) throw err;
 			  console.log('Connected to postgres! Getting schemas...');
 
@@ -151,10 +164,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('end', function(){
 					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 				});
-			});
-			socket.emit('message', {pseudo: "LOL", message: "URL: "+process.env.DATABASE_URL, date: moment(Date.now()).format(msgDateFormat), debut: true});
+			});*/
+			socket.emit('message', {pseudo: "LOL", message: "URL: "+db_url, date: moment(Date.now()).format(msgDateFormat), debut: true});
 			
-			/*client.connect();
+			client.connect();
 
 			client.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC", (err, res) => {
 				if (err) throw err;
@@ -163,7 +176,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
 				}
 				client.end();
-			});*/
+			});
 		}
     });
 	
