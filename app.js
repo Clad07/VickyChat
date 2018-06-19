@@ -29,8 +29,8 @@ const client = new Client({
 var pseudos = [];
 var urls =[];
 var pseudosWriting = [];
-//var bdd = 'mysql';
-var bdd = 'pgsql';
+var bdd = 'mysql';
+//var bdd = 'pgsql';
 var msgDateFormat = "HH:mm:ss";
 var nbMsg = 10;
 

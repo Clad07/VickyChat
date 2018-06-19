@@ -13,10 +13,10 @@
     <body>
 		<div id="canv">
 			<canvas id="paper" width="2000px" height="10000px">
-			Your browser needs to support canvas for this to work!
+				Your browser needs to support canvas for this to work!
 			</canvas>	
 			<div id="cursors">
-			<!-- The mouse pointers will be created here -->
+				<!-- The mouse pointers will be created here -->
 			</div>
 		</div>
 		<div id="all">
@@ -61,8 +61,6 @@
 				</div>
 				<div id="zone_chat">
 					
-				</div>
-				<div id="content">
 				</div>
 			</div>
 		</div>
@@ -169,8 +167,8 @@
 			}
 			
 			// Connexion à socket.io
-			var ip = 'https://vickychat.herokuapp.com';
-			//var ip = 'localhost:5000';
+			//var ip = 'https://vickychat.herokuapp.com';
+			var ip = 'localhost:5000';
             var socket = io.connect(ip);
 			
 			function keyupORchange() {
@@ -550,9 +548,10 @@
 				// on initialise ajaxready à true au premier chargement de la fonction
 				$(window).data('ajaxready', true);
 
-				$('#content').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
+				$('#zone_chat').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
 				
-				$('#content #loader').fadeOut(400);	
+				$('#zone_chat #loader').fadeOut(400);	
+				
 				
 				var deviceAgent = navigator.userAgent.toLowerCase();
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
@@ -566,7 +565,9 @@
 						// lorsqu'on commence un traitement, on met ajaxready à false
 						$(window).data('ajaxready', false);
 
-						$('#content #loader').fadeIn(400);
+						$('#zone_chat #loader').remove();
+						$('#zone_chat').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
+						$('#zone_chat #loader').fadeIn(400);
 
 						socket.emit('affiche_plus', offset);
 						offset++;
@@ -591,11 +592,11 @@
 			
 			socket.on('affiche_plus_fin', function() {
 				$(window).data('ajaxready', true);			
-				$('#content #loader').fadeOut(400);		
+				$('#zone_chat #loader').fadeOut(400);		
             });
 			
 			socket.on('affiche_plus_fin_gif', function() {
-				$('#content #loader').fadeOut(400);		
+				$('#zone_chat #loader').fadeOut(400);		
             });
 			
 			
