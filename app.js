@@ -204,12 +204,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 			db.close();
 		}
 		if(bdd == 'pgsql'){
-			pg.connect(process.env.DATABASE_URL, function(err, client) {
+			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 			  if (err) throw err;
 			  console.log('Connected to postgres! Getting schemas...');
 
 			  client
-				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
+				//.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
 				.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg)+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
@@ -219,7 +219,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('end', function(){
 					socket.emit('affiche_plus_fin');
 				});
+				done();
 			});
+			pg.end();
 		}
 		socket.emit('affiche_plus_fin_gif');
 	});
@@ -331,13 +333,15 @@ io.sockets.on('connection', function (socket, pseudo) {
 						db.close();
 					}
 					if(bdd == 'pgsql'){
-						pg.connect(process.env.DATABASE_URL, function(err, client) {
+						pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 						  if (err) throw err;
 						  console.log('Connected to postgres! Getting schemas...');
 
 						  client
-							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ")
+							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
+						  done();
 						});
+						pg.end();
 					}
 					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format(msgDateFormat), debut: true});
 				}else{
