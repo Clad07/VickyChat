@@ -2,9 +2,10 @@ db = module.exports = {
   mysql : require('mysql'),
   mySqlClient : null,
  
-  connect : function (host, user, password, database) {
+  connect : function (host, port, user, password, database) {
     this.mySqlClient = this.mysql.createConnection({
       host     : host,
+	  port     : port,
       user     : user,
       password : password,
       database : database

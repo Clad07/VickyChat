@@ -25,9 +25,7 @@ body{
 	height:22px !important;
 	background:url('/emote/Thumbs-Up.png') no-repeat -4px 0 !important;
 }
-#formulaire_chat{
-	position: relative !important;
-}
+
 #zone_chat strong {
 	position: relative;
 	color: olive !important;
@@ -37,13 +35,16 @@ body{
 	padding-left: 5px !important;
 	padding-right: 5px !important;
 }
+
 #zone_chat h3{
 	font-size: 21px !important;
 	margin-bottom: 5px;
 }
-#zone_chat span{
+
+#formulaire_chat, #zone_chat span, #zone_chat em{
 	position: relative;
 }
+
 #zone_chat{
 	/*position: relative;*/
 	white-space: pre-wrap !important;
