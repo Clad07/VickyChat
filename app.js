@@ -28,10 +28,12 @@ const client = new Client({
 
 var pseudos = [];
 var urls =[];
+var socketId =[];
 var pseudosWriting = [];
-//var bdd = 'mysql';
-var bdd = 'pgsql';
-var msgDateFormat = "HH:mm:ss";
+var bdd = 'mysql';
+//var bdd = 'pgsql';
+moment.locale('fr');
+var msgDateFormat = "[le] Do MMMM YYYY [à] HH:mm:ss";
 var nbMsg = 10;
 
 //variable for flood
@@ -120,6 +122,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			pseudos.push(pseudo);
 			pseudosWriting.push(false);
 			urls.push(url);
+			socketId.push(socket.id);
 			socket.broadcast.emit('nouveau_client', pseudo,url,moment(dat).format("HH:mm:ss"));
 		}
 		socket.pseudo = pseudo;//socket.set('pseudo', pseudo);
@@ -130,7 +133,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
-				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+				}
 			}
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
@@ -156,7 +161,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+					}
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
@@ -181,13 +188,16 @@ io.sockets.on('connection', function (socket, pseudo) {
     });
 	
 	socket.on('affiche_plus', function(offset){
+		var pseudo = socket.pseudo;
 		//fonction transmission histo receuili
 		var processResult = function(row) {
 			//console.log(row);
 			//console.log("\n\n\n" + (row.length-1) + "\n\n\n");
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
-				socket.emit('message', {pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+				}
 			}
 			socket.emit('affiche_plus_fin');
 		}
@@ -213,7 +223,9 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg)+") s ORDER BY s.id ASC")
 				.on('row', function(row) {
 					//console.log(row);
-					socket.emit('message', {pseudo: row.pseudo, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+					}
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
@@ -275,7 +287,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 	});
 
     // Dès qu'on reçoit un message, on récupère le pseudo de son auteur et on le transmet aux autres personnes
-    socket.on('message', function (message) {
+    socket.on('message', function (message, destinataire) {
 		var pseudo;
 		var dat = moment();
 		if(message[0] == '/'){
@@ -283,13 +295,13 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
 				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/harlem'){
 				//fait trembler lecran !		
@@ -305,12 +317,23 @@ io.sockets.on('connection', function (socket, pseudo) {
 					addRatingEntry(pseudo);
 					if(evalRating(pseudo)){
 						//fait trembler lecran !		
-						socket.emit('wizz');
-						socket.broadcast.emit('wizz');
-						message = pseudo+" a envoyé un wizz !";
+						message = pseudo+" a envoyé un wizz à " + destinataire + " !";
 						message = ent.encode(message);
-						socket.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
-						socket.broadcast.emit('message', {pseudo: '', message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+						socket.emit('wizz');
+						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+						if(destinataire=="Tous"){
+							socket.broadcast.emit('wizz');
+							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+						}else{
+							for(var i=0;i<pseudos.length;i++){
+								if(pseudos[i]==destinataire){
+									if(io.sockets.connected[socketId[i]]!="undefined"){
+										io.sockets.connected[socketId[i]].emit('wizz');
+										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+									}
+								}
+							}
+						}
 					}else{
 						//for(var i=0;i<10;i++)
 							addRatingEntry(pseudo);
@@ -321,34 +344,50 @@ io.sockets.on('connection', function (socket, pseudo) {
 		}else{
 			//socket.get('pseudo', function (error, pseudo) {
 			pseudo = socket.pseudo;
-				if(evalRating(pseudo)){
-					addRatingEntry(pseudo);
-					message = ent.encode(message);
-					socket.broadcast.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format("msgDateFormat"), debut: true});
-					//ajout dans la BDD
-					if(bdd == 'mysql'){
-						db.connect('localhost','5454','Elisath','Elisath','vickychat');
-						var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
-						db.executeInsertQuery(sqlInsert);
-						db.close();
-					}
-					if(bdd == 'pgsql'){
-						pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-						  if (err) throw err;
-						  console.log('Connected to postgres! Getting schemas...');
-
-						  client
-							.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
-						  done();
-						});
-						pg.end();
-					}
-					socket.emit('message', {pseudo: pseudo, message: message, date: moment(dat).format(msgDateFormat), debut: true});
+			if(evalRating(pseudo)){
+				addRatingEntry(pseudo);
+				message = ent.encode(message);
+				console.log(pseudo + ' vers ' + destinataire);
+				socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
+				if(destinataire=="Tous"){
+					socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
 				}else{
-					//for(var i=0;i<10;i++)
-						addRatingEntry(pseudo);
-					socket.emit('flood');
+					console.log('destinataire choisi');
+					for(var i=0;i<pseudos.length;i++){
+						if(pseudos[i]==destinataire){
+							console.log(pseudo + ' vers ' + destinataire);
+							//io.sockets.connected permet d'envoyer seulement a la personne voulu
+							if(io.sockets.connected[socketId[i]]!="undefined"){
+								io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
+							}
+							break;
+						}
+					}
 				}
+				
+				//ajout dans la BDD
+				if(bdd == 'mysql'){
+					db.connect('localhost','5454','Elisath','Elisath','vickychat');
+					var sqlInsert = "insert into historiquechat (pseudo,destinataire,text,date) values('" + pseudo + "','" + destinataire + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
+					db.executeInsertQuery(sqlInsert);
+					db.close();
+				}
+				if(bdd == 'pgsql'){
+					pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+					  if (err) throw err;
+					  console.log('Connected to postgres! Getting schemas...');
+
+					  client
+						.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + destinataire + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
+					  done();
+					});
+					pg.end();
+				}
+			}else{
+				//for(var i=0;i<10;i++)
+					addRatingEntry(pseudo);
+				socket.emit('flood');
+			}
 			//});
 		}
     }); 
@@ -359,15 +398,18 @@ io.sockets.on('connection', function (socket, pseudo) {
 		//socket.get('pseudo', function (error, pseudo) {
 			var ancienPseudos = [];
 			var ancienUrls = [];
+			var ancienSocketId = [];
 			var dat = moment();
 			for(var i=0;i<pseudos.length;i++){
 				if(pseudos[i]!=socket.pseudo){
 					ancienPseudos[ancienPseudos.length]=pseudos[i];
 					ancienUrls[ancienUrls.length]=urls[i];
+					ancienSocketId[ancienSocketId.length]=socketId[i];
 				}
 			}
 			pseudos = ancienPseudos;
 			urls = ancienUrls;
+			socketId = ancienSocketId;
 			
 			//socket.get('url', function (error, url) {
 				socket.broadcast.emit('clientparti', socket.pseudo,moment(dat).format("HH:mm:ss"));
@@ -386,6 +428,12 @@ io.sockets.on('connection', function (socket, pseudo) {
         // This line sends the event (broadcasts it)
         // to everyone except the originating client.
         socket.broadcast.emit('moving', data);
+    });
+	
+	socket.on('bouton_test', function () {
+		var info = "test";
+		info = moment.locale();
+        socket.emit('bouton_test', info);
     });
 });
 

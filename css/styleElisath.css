@@ -1,6 +1,9 @@
-#zone_chat strong {
-	color: #909691 !important;
-    border-color: #909691 !important;
+.emetteur, .vers, .destinataire {
+	color: #0EB2AD !important;
+    border-color: #0EB2AD !important;
+}
+.messageTotal{
+	background-color:#00000022 !important;
 }
 #gauche {
 	border-color: #0EB2AD !important;
@@ -12,7 +15,7 @@
     color: #0EB2AD !important;
     background-color: #e7e7e7 !important;
 }
-#envoi_message {
+#envoi_message, #bouton_test, #combo, .clicClient:hover {
 	background-color: #0EB2AD !important;
 	color: #000000 !important;
 }

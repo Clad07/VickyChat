@@ -8,6 +8,8 @@
 		<link id="link" rel="stylesheet" type="text/css" href="css/styleNorm.css">
         <meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
 		<link rel="icon" type="image/png" href="image/logo.png" />
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
     </head>
 	
     <body>
@@ -46,21 +48,32 @@
 				</div>	
 			</div>
 			<div id="gauche">
-				<div>
-					<div id="paperGauche">
-						<img id='avatar' src="" height="100" width="100">
-						<h2 id="h">-</h2>
+				<div id="form">
+					<form action="/" method="post" id="formulaire_chat">
+					<div>
+						<div id="formHautGauche">
+							<img id='avatar' src="" height="100" width="100">
+							<h2 id="h">-</h2>
+						</div>
+						<div id="formHautDroite">
+							<center><h2 id="vers">Vers :</h2></center>
+							<select name="combo" id="combo" >
+								<option value="Tous">Tous</option>
+							</select>
+						</div>
+						
 					</div>
-				</div>
-				<form action="/" method="post" id="formulaire_chat">
-					<textarea name="message" id="message" placeholder="Votre message..."></textarea>
-					<input type="submit" id="envoi_message" value="Envoyer" />
-				</form>
-				<div id="zone_client_ecrit">
-					En train d'écrire :
+					
+						<textarea name="message" id="message" placeholder="Votre message..."></textarea>
+						<input type="submit" id="envoi_message" value="Envoyer" />
+					</form>
+					<div id="zone_client_ecrit">
+						En train d'écrire :
+					</div>
+					<button id="bouton_test" name="button">Cliquez sur moi :)</button>
 				</div>
 				<div id="zone_chat">
-					
+						
 				</div>
 			</div>
 		</div>
@@ -139,7 +152,7 @@
 					return false;
 				 }
 			});
-			
+		
 			var pseudo = readCookie("pseudo");
 			
 			var url = readCookie("image");
@@ -167,8 +180,8 @@
 			}
 			
 			// Connexion à socket.io
-			var ip = 'https://vickychat.herokuapp.com';
-			//var ip = 'localhost:5000';
+			//var ip = 'https://vickychat.herokuapp.com';
+			var ip = 'localhost:5000';
             var socket = io.connect(ip);
 			
 			function keyupORchange() {
@@ -187,6 +200,13 @@
 			$('#message').keyup(function(event) {
 				keyupORchange();
 			});
+			
+			$('#bouton_test').click(function(event) {
+				socket.emit('bouton_test');
+			});
+			socket.on('bouton_test', function(info) {
+                alert(info);
+            });			
 			
 			socket.on('client_ecrit', function(pseudos) {
 				$('#zone_client_ecrit').html('En train d\'écrire : ');
@@ -227,7 +247,7 @@
 			
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.message, data.date, data.debut);
+                insereMessage(data.pseudo, data.destinataire, data.message, data.date, data.debut);
 				if(document.body.className == 'blurred'){
 					PageTitleNotification.Off();
 					PageTitleNotification.On(data.pseudo + " a écrit un message");
@@ -269,26 +289,38 @@
             socket.on('nouveau_client', function(pseudo,url, date) {
                 $('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a rejoint le Chat !</em></p>');
 				if(url != null){
-					$('#zone_util').prepend('<div><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+					$('#zone_util').append('<div class="clicClient" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+					$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '"><img class="avatarMini" src="'+url+'" height="15" width="15">'+ pseudo + '</option>');
 				}
             });
 			
+			function clicClient(pseudo) {
+				//alert(pseudo);
+				$('#combo option[value="' + pseudo + '"]').prop('selected', true);
+				//$('#combo').value=pseudo;
+			}
+			
 			//on recoit les client deja la
 			socket.on('clients', function(pseudo,url) {
-					$('#zone_util').prepend('<div><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+					$('#zone_util').append('<div class="clicClient" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
+					$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '"><img class="avatarMini" src="'+url+'" height="15" width="15">'+ pseudo + '</option>');
             });
 			
 			socket.on('clientparti', function(pseudo, date) {
 					$('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a quitté le Chat !</em></p>');	
-					$('#zone_util').text("");
-					socket.emit('clients');
+					$('#zone_util'+pseudo).remove();
+					$('#combo'+pseudo).remove();
+					//$('#combo').text('');
+					//$('#combo').prepend('<option value="Tous">Tous</option>');
+					//socket.emit('clients');
             });
 
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             $('#formulaire_chat').submit(function () {
                 var message = $('#message').val();
+				var dest = $('#combo option:selected').val();
 				if(message != ""){
-					socket.emit('message', message); // Transmet le message aux autres
+					socket.emit('message', message, dest); // Transmet le message aux autres
 					//insereMessage(pseudo, message); // Affiche le message aussi sur notre page
 					$('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
 				}
@@ -305,7 +337,7 @@
 			
 			
             // Ajoute un message dans la page
-            function insereMessage(pseudo, message, date, debut) {
+            function insereMessage(pseudo, destinataire, message, date, debut) {
 				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/fuck.png" title=":mlm:"/>');
 				message = message.replace(/&colon;MLM&colon;/g, '<img src="/emote/fuck.gif" title=":MLM:"/>');
 				message = message.replace(/&colon;cafe&colon;/g, '<img src="/emote/cafe.png" title=":cafe:"/>');
@@ -328,10 +360,20 @@
 						$('#zone_chat').append('<p><em>'+ date + " : " + message + '</em></p>');
 					}
 				}else{
+					pseudo = '<span class="emetteur">' + pseudo + '</span>';
+					var vers = '<span class="vers fas fa-arrow-right"></span>';
+					if(destinataire=="Tous"){
+						destinataire = '<span class="destinataire destTous">' + destinataire + '</span>';
+					}
+					else{
+						destinataire = '<span class="destinataire">' + destinataire + '</span>';
+					}
+					date = '<span class="date">' + date + '</span>';
+					var messageTotal = '<div class="messageTotal"><p><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</p><div class="message">' + message + '</div></div>';
 					if(debut){
-						$('#zone_chat').prepend('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
+						$('#zone_chat').prepend(messageTotal);
 					}else{
-						$('#zone_chat').append('<h3><strong>' + pseudo + ' à ' + date + '</strong></h3><p><span>' + message + '</span></p>');
+						$('#zone_chat').append(messageTotal);
 					}
 				}
 				$('#canv').height($('#gauche').outerHeight(true)+50);
