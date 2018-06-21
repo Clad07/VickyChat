@@ -30,8 +30,8 @@ var pseudos = [];
 var urls =[];
 var socketId =[];
 var pseudosWriting = [];
-//var bdd = 'mysql';
-var bdd = 'pgsql';
+var bdd = 'mysql';
+//var bdd = 'pgsql';
 moment.locale('fr');
 var msgDateFormat = "[le] Do MMMM YYYY [à] HH:mm:ss";
 var nbMsg = 10;
@@ -347,15 +347,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 			if(evalRating(pseudo)){
 				addRatingEntry(pseudo);
 				message = ent.encode(message);
-				console.log(pseudo + ' vers ' + destinataire);
 				socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
 				if(destinataire=="Tous"){
 					socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
 				}else{
-					console.log('destinataire choisi');
 					for(var i=0;i<pseudos.length;i++){
 						if(pseudos[i]==destinataire){
-							console.log(pseudo + ' vers ' + destinataire);
 							//io.sockets.connected permet d'envoyer seulement a la personne voulu
 							if(io.sockets.connected[socketId[i]]!="undefined"){
 								io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
@@ -424,10 +421,25 @@ io.sockets.on('connection', function (socket, pseudo) {
 	
 	//for mini draw
 	// Start listening for mouse move events
-    socket.on('mousemove', function (data) {
+    socket.on('mousemove', function (data, destinataire) {
         // This line sends the event (broadcasts it)
         // to everyone except the originating client.
-        socket.broadcast.emit('moving', data);
+		
+		if(destinataire=="Tous"){
+			socket.broadcast.emit('moving', data);
+		}else{
+			for(var i=0;i<pseudos.length;i++){
+				if(pseudos[i]==destinataire){
+					//io.sockets.connected permet d'envoyer seulement a la personne voulu
+					if(io.sockets.connected[socketId[i]]!="undefined"){
+						io.sockets.connected[socketId[i]].emit('moving', data);
+					}
+					break;
+				}
+			}
+		}
+		
+        
     });
 	
 	socket.on('bouton_test', function () {
