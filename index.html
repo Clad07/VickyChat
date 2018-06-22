@@ -2,11 +2,12 @@
 <html>
     <head>
 		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<!-- <meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" /> -->
         <meta charset="utf-8" />
         <title>Vicky Chat</title>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<link id="link" rel="stylesheet" type="text/css" href="css/styleNorm.css">
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" />
 		<link rel="icon" type="image/png" href="image/logo.png" />
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
@@ -181,7 +182,7 @@
 			
 			// Connexion à socket.io
 			var ip = 'https://vickychat.herokuapp.com';
-			//var ip = 'localhost:5000';
+			//var ip = '192.168.1.74:5000';
             var socket = io.connect(ip);
 			
 			function keyupORchange() {
