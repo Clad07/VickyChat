@@ -10,11 +10,11 @@
 		<link id="link" rel="stylesheet" type="text/css" href="css/styleNorm.css">
 		<link rel="icon" type="image/png" href="image/logo.png" />
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     </head>
 	
     <body>
-		<div id="canv">
+		<div id="canv" style="display:none;">
 			<canvas id="paper" width="2000px" height="10000px">
 				Your browser needs to support canvas for this to work!
 			</canvas>	
@@ -22,59 +22,100 @@
 				<!-- The mouse pointers will be created here -->
 			</div>
 		</div>
-		<div id="all">
-			<div id="droite">
-				<div class="droite">
-					<center><h2>Utilisateurs :</h2></center>
-					
-					<div id="zone_util">
-					
-					</div>
-				</div>
-				<div class="droite">
-					<center><h2>Thèmes :</h2></center>
-					<div id="allColor">
-						<div id="styleNorm"></div>
-						<div id="styleBleu"></div>
-						<div id="styleRouge"></div>
-						<div id="styleVert"></div>
-						<div id="styleHalloween"></div>
-						<div id="styleOrange"></div>
-						<div id="styleRose"></div>
-						<div id="styleMatrix"></div>
-						<div id="styleElisath"></div>
-						<div id="stylePSG"></div>
-						<div id="styleFF7"></div>
-					</div>
-				</div>	
-			</div>
-			<div id="gauche">
-				<div id="form">
-					<form action="/" method="post" id="formulaire_chat">
-					<div>
-						<div id="formHautGauche">
-							<img id='avatar' src="" height="100" width="100">
-							<h2 id="h">-</h2>
+		<div id="all" class="container-fluid">
+			<div class="row">
+				<div id="droite" class="col-12 col-md-5 col-lg-4 col-xl-3 order-md-last">
+					<div class="droite row">
+						<div class="col-12">
+							<div class="row">
+								<div class="col-12">
+									<div class="grosTitre">Utilisateurs :</div>
+								</div>
+							</div>
+							<div class="row" id="zone_util">
+							
+							</div>
 						</div>
-						<div id="formHautDroite">
-							<center><h2 id="vers">Vers :</h2></center>
-							<select name="combo" id="combo" >
-								<option value="Tous">Tous</option>
-							</select>
+					</div>
+					<div class="droite row">
+						<div class="col-12">
+							<div class="row">
+								<div class="col-12">
+									<div class="grosTitre">Thèmes :</div>
+								</div>
+							</div>
+						
+							<div class="row">
+								<div id="allColor" class="col-12">
+									<div id="styleNorm" class="0col-1"></div>
+									<div id="styleBleu" class="0col-1"></div>
+									<div id="styleRouge" class="0col-1"></div>
+									<div id="styleVert" class="0col-1"></div>
+									<div id="styleHalloween" class="0col-1"></div>
+									<div id="styleOrange" class="0col-1"></div>
+									<div id="styleRose" class="0col-1"></div>
+									<div id="styleMatrix" class="0col-1"></div>
+									<div id="styleElisath" class="0col-1"></div>
+									<div id="stylePSG" class="0col-1"></div>
+									<div id="styleFF7" class="0col-1"></div>
+								</div>	
+							</div>
 						</div>
-						
-					</div>
-					
-						<textarea name="message" id="message" placeholder="Votre message..."></textarea>
-						<input type="submit" id="envoi_message" value="Envoyer" />
-					</form>
-					<div id="zone_client_ecrit">
-						En train d'écrire :
-					</div>
-					<button id="bouton_test" name="button">Cliquez sur moi :)</button>
+					</div>	
 				</div>
-				<div id="zone_chat">
-						
+				<div id="gauche" class="col-12 col-md-7 col-lg-8 col-xl-9 order-md-first">
+					<div id="form" class ="gauche row">
+						<div class="col-12">
+							<form action="/" method="post" id="formulaire_chat">
+								<div class="row no-gutters">
+									<div class="col-auto">
+										<img id='avatar' src="">
+									</div>
+									
+									<div class="col">
+										<div class="row no-gutters height_avatar">
+											<div class="col-12 col-sm-4 colAlignCenter align-self-center">
+												<span id="pseudo" class="titre">-</span>
+											</div>
+											<div class="d-none d-sm-block col-sm-4 colAlignCenter align-self-center">
+												<span class="fas fa-arrow-right titre"></span>
+											</div>
+											<div class="col-12 d-sm-none colAlignCenter align-self-center">
+												<span class="fas fa-arrow-down titre"></span>
+											</div>
+											<div class="col-12 col-sm-4 colAlignCenter align-self-center">
+												<select name="combo" id="combo" class="">
+													<option value="Tous">Tous</option>
+												</select>
+											</div>
+										</div>
+									</div>
+			
+								</div>
+								<div class="row no-gutters">
+									<div class="col-12">
+										<textarea name="message" id="message" placeholder="Votre message..."></textarea>
+									<!-- </div> -->
+									<!-- <div class="col-6 col-sm-3 colAlignCenter"> -->
+										<input type="submit" id="envoi_message" value="Envoyer" />
+									</div>
+									
+								</div>
+							
+								<div id="zone_client_ecrit" class="row no-gutters">
+									<div class="col-12">
+										<span>En train d'écrire :</span>
+									</div>
+									<div class="col-12 colAlignCenter" style="display:none;"> 
+										<button id="bouton_test" name="button">Cliquez sur moi :)</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div id="zone_chat" class ="gauche row">
+							
+					</div>
 				</div>
 			</div>
 		</div>
@@ -85,14 +126,16 @@
 			var d1 = document.getElementById('gauche');
 			var d3 = document.getElementById('message');
 			var d4 = document.getElementById('envoi_message');
-			var d1width = (parseInt(parseInt(getComputedStyle(d0,null).width,10)*0.75,10) - 60);
+			/*var d1width = (parseInt(parseInt(getComputedStyle(d0,null).width,10)*0.75,10) - 60);
 			var d2width = (parseInt(parseInt(getComputedStyle(d0,null).width,10)*0.25,10) - 10);
 			d1.style.width = d1width+"px";
 			d2.style.width = d2width+"px";
-			d3.style.width = (d1width - parseInt(d4.offsetWidth,10) - 20)+"px";
+			d3.style.width = (d1width - parseInt(d4.offsetWidth,10) - 20)+"px";*/
 		</script>
 		<script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -181,8 +224,8 @@
 			}
 			
 			// Connexion à socket.io
-			var ip = 'https://vickychat.herokuapp.com';
-			//var ip = '192.168.1.74:5000';
+			//var ip = 'https://vickychat.herokuapp.com';
+			var ip = '192.168.1.74:5000';
             var socket = io.connect(ip);
 			
 			function keyupORchange() {
@@ -220,7 +263,7 @@
 			//on l'envoie au serveur et on l'affiche dans le titre
             socket.emit('nouveau_client', pseudo,url);
             document.title = pseudo + ' - ' + document.title;
-			$('#h').text(pseudo);
+			$('#pseudo').text(pseudo);
 			socket.emit('clients');
 			$('#avatar').attr('src',url);
 
@@ -288,10 +331,9 @@
 			
             // Quand un nouveau client se connecte, on affiche l'information
             socket.on('nouveau_client', function(pseudo,url, date) {
-                $('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a rejoint le Chat !</em></p>');
+                $('#zone_chat').prepend('<div class="info">' + date + " : " + pseudo + ' a rejoint le Chat !</div>');
 				if(url != null){
-					$('#zone_util').append('<div class="clicClient" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
-					$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '"><img class="avatarMini" src="'+url+'" height="15" width="15">'+ pseudo + '</option>');
+					appendClient(pseudo, url);
 				}
             });
 			
@@ -301,14 +343,19 @@
 				//$('#combo').value=pseudo;
 			}
 			
+								
+			function appendClient(pseudo, url){
+				$('#zone_util').append('<div class="col-12 col-sm-6 col-md-12"><div class="clicClient row" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><div class="col-4"><img class="avatarMini" src="'+url+'"></div><div class="pseudoMini col-8">'+ pseudo + '</div></div></div>');
+				$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '">' + pseudo + '</option>');
+			}
+								
 			//on recoit les client deja la
 			socket.on('clients', function(pseudo,url) {
-					$('#zone_util').append('<div class="clicClient" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><img class="avatarMini" src="'+url+'" height="50" width="50"><div class="hMini">'+ pseudo + '</div></div>');
-					$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '"><img class="avatarMini" src="'+url+'" height="15" width="15">'+ pseudo + '</option>');
+				appendClient(pseudo, url);
             });
 			
 			socket.on('clientparti', function(pseudo, date) {
-					$('#zone_chat').prepend('<p><em>' + date + " : " + pseudo + ' a quitté le Chat !</em></p>');	
+					$('#zone_chat').prepend('<div class="info">' + date + " : " + pseudo + ' a quitté le Chat !</div>');	
 					$('#zone_util'+pseudo).remove();
 					$('#combo'+pseudo).remove();
 					//$('#combo').text('');
@@ -356,9 +403,9 @@
 				message = message.replace(/&colon;p/gi, '<img src="/emote/Yuck.png" title=":p"/>');
 				if(pseudo == ""){
 					if(debut){
-						$('#zone_chat').prepend('<p><em>'+ date + " : " + message + '</em></p>');
+						$('#zone_chat').prepend('<div class="info">'+ date + " : " + message + '</div>');
 					}else{
-						$('#zone_chat').append('<p><em>'+ date + " : " + message + '</em></p>');
+						$('#zone_chat').append('<div class="info">'+ date + " : " + message + '</div>');
 					}
 				}else{
 					pseudo = '<span class="emetteur">' + pseudo + '</span>';
@@ -370,7 +417,7 @@
 						destinataire = '<span class="destinataire">' + destinataire + '</span>';
 					}
 					date = '<span class="date">' + date + '</span>';
-					var messageTotal = '<div class="messageTotal"><p><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</p><div class="message">' + message + '</div></div>';
+					var messageTotal = '<div class="messageTotal"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';
 					if(debut){
 						$('#zone_chat').prepend(messageTotal);
 					}else{
@@ -644,7 +691,7 @@
             });
 			
 			
-			infiniteScroll();
+			//infiniteScroll();
 			
         </script>
     </body>

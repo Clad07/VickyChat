@@ -5,7 +5,7 @@
 .messageTotal{
 	background-color:#ffffff22 !important;
 }
-#gauche {
+.gauche {
 	border-color: #ff8c00 !important;
     color: #ff8c00 !important;
     background-color: #000000 !important;
@@ -22,6 +22,6 @@
 #message{
 	color: #000000 !important;
 }
-h2{
+.grosTitre, .titre{
 	color: #ffffff !important;
 }

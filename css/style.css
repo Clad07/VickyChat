@@ -1,9 +1,6 @@
-html {
-    background: white url(/image/background.png) repeat;
-	/*overflow: hidden;*/
-}
 body{
 	margin: 0px;
+	background: white url(/image/background.png) repeat;
 }
 #canv{
 	position: absolute;
@@ -11,138 +8,84 @@ body{
 	width: 100%;
 	overflow: hidden;
 }
-
 #paper{
 	height: 10000px;
 	width : 2000px;
 	margin: 0px;
 	padding: 0px;
 }
-
 #cursors .cursor{
 	position:absolute;
 	width:15px;
 	height:22px;
 	background:url('/emote/Thumbs-Up.png') no-repeat -4px 0;
 }
-
-/*#zone_chat h3{
-	font-size: 21px;
-	margin-bottom: 5px;
-}*/
-
 #all{
 	font-family: Roboto;
-	margin:auto;
-}
-@media only screen and (min-width: 800px){
-	#all {
-		width:85%;
-	}
-}
-@media only screen and (max-width: 800px){
-	#all {
-		width:100%;
-	}
 }
 #gauche {
-	background-color: silver;
-	color: grey;
-	padding:25px;
-	border: 5px olive solid;
-	border-radius: 10px;	
+
 }
 #droite {
-	width:calc(225px - 5px) !important;
-	margin-top:25px;
 	text-align: center;
 }
-.droite {
-	margin-bottom:5px;
-	padding-top:5px;
-	padding-bottom:25px;
+.droite, .gauche {
 	background-color: silver;
 	color: grey;
 	border: 5px olive solid;
 	border-radius: 10px;
 }
-@media only screen and (min-width: 600px){
-	#gauche {
-		width:calc(100% - 60px - 225px) !important;
-		margin-top:25px;
-		margin-bottom:25px;
-		float:left;
-	}
-	#droite {
-		float:right;
-	}
-}
-@media only screen and (max-width: 600px){
-	#gauche {
-		width:calc(100% - 60px) !important;
-		float:center;
-	}
-	#droite {
-		width:calc(100% - 0px) !important;
-		margin-top: 0px;
-		float:center;
-	}
+.grosTitre {
+	font-size: 25px;
+	color: olive;
 }
 
 /****** Tout ce qui est dans l'envoi de message (formulaire) ******/
 
 #avatar {
-	position: relative;
-	display: inline-block;
-	vertical-align: middle;
-	margin-bottom: 10px;
+	height:100px;
 }
-#h {
-	position: relative;
-	display: inline-block;
-	margin:0px;
-	margin-left:25px;
-	padding:0px;
+.height_avatar {
+	height:100px;
 }
-#zone_util {
-	width: 100%;
-	display: inline-block;
+#pseudo {
+
+}
+.vers {
+
+}
+#combo{
+	width: 100px;
+	height: 25px;
+	background-color: olive;
+	color: #ffffff;
+	/*font-size: 1em;*/
+	border: 0px;
+}
+.colAlignCenter{
+	/*vertical-align: middle;*/
 	text-align: center;
 }
-.clicClient:hover {
-	background-color: olive;
-	color:#ffffff;
-}
-.avatarMini {
-	position: relative;
-	display: inline-block;
-	vertical-align: middle;
-}
-.hMini {
-	position: relative;
-	display: inline-block;
-	margin:0px;
-	/*margin-left:25px;*/
-	padding:0px;
-	width:calc(100% - 100px) !important
-}
-.user {
-	display: inline-block;
+.titre {
+	font-size: 20px;
+	color: olive;
+	height:25px;
 }
 #message {
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	text-align: justify;
-	width: calc(100% - 125px) !important;
+	width: calc(100% - 105px) !important;
+	/*width:100%;*/
 	min-height: 50px;
 	border: 0px;
-	vertical-align: top;
-	padding: 0px 5px;
+	/*vertical-align: top;*/
+	/*padding: 0px 5px;*/
 }
 #envoi_message, #bouton_test {
 	/*font-weight: bold;
 	font-variant: small-caps;*/
-	position: relative;
+	/*position: relative;*/
 	width: 100px;
 	height: 50px;
 	background-color: olive;
@@ -152,56 +95,42 @@ body{
 	vertical-align: top;
 	/*float: right;*/
 }
-#bouton_test {
-	margin-top: 10px;
-}
-#formHautGauche{
-	width: calc(100% - 115px) !important;
-	display: inline-block;
-}
-#formHautDroite{
-	display: inline-block;
-	width:100px;
-	/*float:right;*/
-	vertical-align: bottom;
-	margin-bottom: 10px;
-}
-#combo{
-	text-align: center;
-	position: relative;
-	width: 100px;
-	height: 25px;
-	background-color: olive;
-	color: #ffffff;
-	font-size: 1em;
-	border: 0px;
-}
-#vers {
-	margin: 0;
-}
 #zone_client_ecrit{
-	width: calc(100% - 115px) !important;
-	display: inline-block;
-	position: relative;
+
+}
+
+/****** Zone liste utilisateurs ******/
+
+#zone_util {
+
+}
+.clicClient {
+	line-height: 50px;
+}
+.clicClient:hover {
+	background-color: olive;
+	color:#ffffff;
+}
+.avatarMini {
+	height:50px;
+}
+.pseudoMini {
+
 }
 
 /****** relative pour passer au dessus du canvas de dessin ******/
 
-#formulaire_chat, #zone_chat .message, #zone_chat span, #zone_chat em, .clicClient{
+#formulaire_chat, #zone_chat .message, #zone_chat span, #zone_chat em, .clicClient, #envoi_message, #bouton_test, #zone_client_ecrit{
 	position: relative;
 }
 
 /****** Tous ce qui est dans les messages ecrits ******/
 
-#zone_chat em, #zone_chat .message{
-	/*position: relative;*/
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	text-align: justify;
-	width: fit-content;
+#zone_chat{
+	display: block;
 }
 #zone_chat .emetteur, #zone_chat .vers, #zone_chat .destinataire {
-	font-size: 21px;
+	font-size: 20px;
 	color: olive;
 	border: 3px olive solid;
 	border-radius: 10px;
@@ -222,25 +151,41 @@ body{
 }
 #zone_chat .date{
 	margin-left: 10px;
+	font-style: italic;
+}
+#zone_chat .info{
+	margin: 10px;
+	font-style: italic;
 }
 #zone_chat .messageTotal{
 	background-color:#00000011;
 	border-radius: 10px;
-	padding: 1px 10px 10px 10px;
-	margin-bottom: 10px;
+	padding: 10px 10px 10px 10px;
+	margin: 10px;
+	width:auto;
 }
-
+#zone_chat .enteteMessage{
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid;
+}
+#zone_chat .message{
+	/*position: relative;*/
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	text-align: justify;
+	width: fit-content;
+}
 /****** THEME ******/
 
 #allColor{
 	display: inline-block;
 }
-
 #allColor div{
-	position: relative;
+	/*position: relative;*/
 	display: inline-block;
-	width: 35px;
-	height: 35px;
+	width: 50px;
+	height: 50px;
 	margin: 2.5px;
 	-webkit-transition: 0.5s ease-in-out;
 	-moz-transition: 0.5s ease-in-out;
