@@ -14,8 +14,8 @@
     </head>
 	
     <body>
-		<div id="canv" style="display:none;">
-			<canvas id="paper" width="2000px" height="10000px">
+		<div id="canv">
+			<canvas id="paper" width="5000px" height="5000px">
 				Your browser needs to support canvas for this to work!
 			</canvas>	
 			<div id="cursors">
@@ -24,6 +24,7 @@
 		</div>
 		<div id="all" class="container-fluid">
 			<div class="row">
+				
 				<div id="droite" class="col-12 col-md-5 col-lg-4 col-xl-3 order-md-last">
 					<div class="droite row">
 						<div class="col-12">
@@ -47,17 +48,17 @@
 						
 							<div class="row">
 								<div id="allColor" class="col-12">
-									<div id="styleNorm" class="0col-1"></div>
-									<div id="styleBleu" class="0col-1"></div>
-									<div id="styleRouge" class="0col-1"></div>
-									<div id="styleVert" class="0col-1"></div>
-									<div id="styleHalloween" class="0col-1"></div>
-									<div id="styleOrange" class="0col-1"></div>
-									<div id="styleRose" class="0col-1"></div>
-									<div id="styleMatrix" class="0col-1"></div>
-									<div id="styleElisath" class="0col-1"></div>
-									<div id="stylePSG" class="0col-1"></div>
-									<div id="styleFF7" class="0col-1"></div>
+									<div id="styleNorm" class="style"></div>
+									<div id="styleBleu" class="style"></div>
+									<div id="styleRouge" class="style"></div>
+									<div id="styleVert" class="style"></div>
+									<div id="styleHalloween" class="style"></div>
+									<div id="styleOrange" class="style"></div>
+									<div id="styleRose" class="style"></div>
+									<div id="styleMatrix" class="style"></div>
+									<div id="styleElisath" class="style"></div>
+									<div id="stylePSG" class="style"></div>
+									<div id="styleFF7" class="style"></div>
 								</div>	
 							</div>
 						</div>
@@ -139,9 +140,25 @@
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-			$('#styleNorm').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleNorm.css');
-				createCookie("style","styleNorm",356);
+			function sleep(ms) {
+				return new Promise(resolve => setTimeout(resolve, ms));
+			}
+			
+			
+			async function globalStyle(styleCss){
+				$('link[id="link"]').attr('href','css/style'+styleCss+'.css');
+				var color = "style"+styleCss;
+				createCookie("style",color,356);
+				await sleep(10);
+				ctx.strokeStyle = $(".titre").css("color");
+				for(var i=0; i<10;i++){
+					await sleep(10);
+					ctx.stroke();
+				}
+			}
+		
+			$('#styleNorm').click(async function(event) {
+				await globalStyle("Norm");
 				/*alert(
 				'dw '+$(document).width()+'\n'+   // returns height of browser viewport
 				'dh '+$(document).height()+'\n'+ // returns height of HTML document
@@ -149,45 +166,35 @@
 				'wh '+$(window).height() // returns width of HTML document
 				);*/
 			});
-			$('#styleBleu').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleBleu.css');
-				createCookie("style","styleBleu",356);
+			$('#styleBleu').click(async function(event) {
+				await globalStyle("Bleu");
 			});
-			$('#styleRouge').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleRouge.css');
-				createCookie("style","styleRouge",356);
+			$('#styleRouge').click(async function(event) {
+				await globalStyle("Rouge");
 			});
-			$('#styleVert').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleVert.css');
-				createCookie("style","styleVert",356);
+			$('#styleVert').click(async function(event) {
+				await globalStyle("Vert");
 			});
-			$('#styleOrange').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleOrange.css');
-				createCookie("style","styleOrange",356);
+			$('#styleOrange').click(async function(event) {
+				await globalStyle("Orange");
 			});
-			$('#styleRose').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleRose.css');
-				createCookie("style","styleRose",356);
+			$('#styleRose').click(async function(event) {
+				await globalStyle("Rose");
 			});
-			$('#styleMatrix').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleMatrix.css');
-				createCookie("style","styleMatrix",356);
+			$('#styleMatrix').click(async function(event) {
+				await globalStyle("Matrix");
 			});
-			$('#styleElisath').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleElisath.css');
-				createCookie("style","styleElisath",356);
+			$('#styleElisath').click(async function(event) {
+				await globalStyle("Elisath");
 			});
-			$('#styleFF7').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleFF7.css');
-				createCookie("style","styleFF7",356);
+			$('#styleFF7').click(async function(event) {
+				await globalStyle("FF7");
 			});
-			$('#stylePSG').click(function(event) {
-				$('link[id="link"]').attr('href','css/stylePSG.css');
-				createCookie("style","stylePSG",356);
+			$('#stylePSG').click(async function(event) {
+				await globalStyle("PSG");
 			});
-			$('#styleHalloween').click(function(event) {
-				$('link[id="link"]').attr('href','css/styleHalloween.css');
-				createCookie("style","styleHalloween",356);
+			$('#styleHalloween').click(async function(event) {
+				await globalStyle("Halloween");
 			});
 		
 			$('#message').keydown(function(event) {
@@ -408,13 +415,13 @@
 						$('#zone_chat').append('<div class="info">'+ date + " : " + message + '</div>');
 					}
 				}else{
-					pseudo = '<span class="emetteur">' + pseudo + '</span>';
+					pseudo = '<span class="titre emetteur">' + pseudo + '</span>';
 					var vers = '<span class="vers fas fa-arrow-right"></span>';
 					if(destinataire=="Tous"){
-						destinataire = '<span class="destinataire destTous">' + destinataire + '</span>';
+						destinataire = '<span class="titre destinataire destTous">' + destinataire + '</span>';
 					}
 					else{
-						destinataire = '<span class="destinataire">' + destinataire + '</span>';
+						destinataire = '<span class="titre destinataire">' + destinataire + '</span>';
 					}
 					date = '<span class="date">' + date + '</span>';
 					var messageTotal = '<div class="messageTotal"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';
@@ -466,7 +473,10 @@
 					canvas.height = window.innerHeight;
 			}
 			resizeCanvas();*/
-
+			
+			var canvas = $('#paper');
+			var	ctx = canvas[0].getContext('2d');
+			
 			$(function(){
 				// This demo depends on the canvas element
 				if(!('getContext' in document.createElement('canvas'))){
@@ -475,9 +485,7 @@
 				}
 
 				var doc = $(document),
-					win = $(window),
-					canvas = $('#paper'),
-					ctx = canvas[0].getContext('2d');
+					win = $(window);
 									
 				canvas.width = window.innerWidth;
 				canvas.height = window.innerHeight;
@@ -491,7 +499,7 @@
 
 				var clients = {};
 				var cursors = {};
-
+				//var rect = canvas.getBoundingClientRect();
 				socket.on('moving', function (data) {
 
 					if(! (data.id in clients)){
@@ -524,8 +532,8 @@
 				canvas.on('mousedown',function(e){
 					e.preventDefault();
 					drawing = true;
-					prev.x = e.pageX;
-					prev.y = e.pageY;
+					prev.x = e.pageX ;
+					prev.y = e.pageY ;
 					
 					// Hide the instructions
 					//instructions.fadeOut();
@@ -583,7 +591,7 @@
 					//ctx.moveTo(-canvas.offset().left, -canvas.offset().top);
 					ctx.moveTo(fromx, fromy);
 					ctx.lineTo(tox, toy);
-					ctx.strokeStyle = $("h2").css("color");
+					ctx.strokeStyle = $(".titre").css("color");
 					ctx.lineWidth = 1;
 					ctx.stroke();
 				}
@@ -621,6 +629,11 @@
 				window.location.reload();
             });
 			
+			socket.on('clear', function() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.beginPath();
+            });
+			
 			socket.on('wizz', function() {
 					var snd = new Audio("/audio/hey.mp3"); // buffers automatically when created
 					snd.play();
@@ -628,10 +641,6 @@
 					//$( "#all" ).effect( "shake", {times:4, distance:50, direction:"up"}, 500  );
 					//$( "#all" ).effect( "shake", {times:2, distance:50, direction:"left"}, 500  );
             });
-			
-			function sleep(ms) {
-				return new Promise(resolve => setTimeout(resolve, ms));
-			}
 			
 			function infiniteScroll(){
 				var offset = 1;
@@ -691,7 +700,7 @@
             });
 			
 			
-			//infiniteScroll();
+			infiniteScroll();
 			
         </script>
     </body>

@@ -299,7 +299,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
-				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
+				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /clear : efface les dessins \n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
 				message = ent.encode(message);
 				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
@@ -310,6 +310,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 			if(message == '/reset'){
 				//efface cookie pour reecrire pseudo/image		
 				socket.emit('reset');
+			}
+			if(message == '/clear'){
+				//efface cookie pour reecrire pseudo/image		
+				socket.emit('clear');
 			}
 			if(message == '/wizz'){
 				//socket.get('pseudo', function (error, pseudo) {

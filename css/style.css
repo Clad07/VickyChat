@@ -9,8 +9,9 @@ body{
 	overflow: hidden;
 }
 #paper{
-	height: 10000px;
-	width : 2000px;
+	position:absolute;
+	/*height: 5000px;
+	width : 5000px;*/
 	margin: 0px;
 	padding: 0px;
 }
@@ -59,11 +60,9 @@ body{
 	height: 25px;
 	background-color: olive;
 	color: #ffffff;
-	/*font-size: 1em;*/
 	border: 0px;
 }
 .colAlignCenter{
-	/*vertical-align: middle;*/
 	text-align: center;
 }
 .titre {
@@ -76,16 +75,10 @@ body{
 	word-wrap: break-word;
 	text-align: justify;
 	width: calc(100% - 105px) !important;
-	/*width:100%;*/
 	min-height: 50px;
 	border: 0px;
-	/*vertical-align: top;*/
-	/*padding: 0px 5px;*/
 }
 #envoi_message, #bouton_test {
-	/*font-weight: bold;
-	font-variant: small-caps;*/
-	/*position: relative;*/
 	width: 100px;
 	height: 50px;
 	background-color: olive;
@@ -93,7 +86,9 @@ body{
 	font-size: 1em;
 	border: 0px;
 	vertical-align: top;
-	/*float: right;*/
+}
+#envoi_message:hover{
+	opacity:0.5;
 }
 #zone_client_ecrit{
 
@@ -118,10 +113,12 @@ body{
 
 }
 
-/****** relative pour passer au dessus du canvas de dessin ******/
-
-#formulaire_chat, #zone_chat .message, #zone_chat span, #zone_chat em, .clicClient, #envoi_message, #bouton_test, #zone_client_ecrit{
-	position: relative;
+/****** inherit et relative pour passer au dessus du canvas de dessin ******/
+.col, .col-1, .col-10, .col-11, .col-12, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-auto, .col-lg, .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-auto, .col-md, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-auto, .col-sm, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-auto, .col-xl, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-auto {
+	position: static !important;
+}
+.message, .grosTitre, .titre, .clicClient, #combo, #envoi_message, #bouton_test, #zone_client_ecrit, .info, #message, .date, .style{
+	position: relative !important;
 }
 
 /****** Tous ce qui est dans les messages ecrits ******/
@@ -130,8 +127,6 @@ body{
 	display: block;
 }
 #zone_chat .emetteur, #zone_chat .vers, #zone_chat .destinataire {
-	font-size: 20px;
-	color: olive;
 	border: 3px olive solid;
 	border-radius: 10px;
 	padding-left: 5px;
@@ -156,6 +151,9 @@ body{
 #zone_chat .info{
 	margin: 10px;
 	font-style: italic;
+	white-space: pre-wrap;
+    word-wrap: break-word;
+	width: fit-content;
 }
 #zone_chat .messageTotal{
 	background-color:#00000011;
