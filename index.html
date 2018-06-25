@@ -150,8 +150,8 @@
 				var color = "style"+styleCss;
 				createCookie("style",color,356);
 				await sleep(10);
-				ctx.strokeStyle = $(".titre").css("color");
 				for(var i=0; i<10;i++){
+					ctx.strokeStyle = $(".titre").css("color");
 					await sleep(10);
 					ctx.stroke();
 				}
