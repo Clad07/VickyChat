@@ -1,27 +1,24 @@
-.emetteur, .vers, .destinataire {
+.grosTitre, .titre, .titreColor{
 	color: #495ac7 !important;
-    border-color: #495ac7 !important;
 }
-.messageTotal{
-	background-color:#00000022 !important;
+.saisie{
+	color: #495ac7 !important;
 }
-.gauche {
-	border-color: #495ac7 !important;
-    color: #404040 !important;
-    background-color: #9ed2ff !important;
-}
-.droite {
-	border-color: #495ac7 !important;
-    color: #404040 !important;
-    background-color: #9ed2ff !important;
-}
-#envoi_message, #bouton_test, #combo, .clicClient:hover {
+.bouton, .boutonHover:hover{
 	background-color: #495ac7 !important;
 	color: #ffffff !important;
 }
-#message{
-	color: #495ac7 !important;
+.bouton:hover{
+	opacity:0.5 !important;
 }
-.grosTitre, .titre{
-	color: #495ac7 !important;
+.backColorTransp{
+	background-color:#00000022 !important;
+}
+.rectBord{
+	border-color: #495ac7 !important;
+	color: #404040 !important;
+	background-color: #9ed2ff !important;
+}
+.bord{
+    border-color: #495ac7 !important;
 }

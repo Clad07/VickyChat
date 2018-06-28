@@ -1,27 +1,24 @@
-.emetteur, .vers, .destinataire {
+.grosTitre, .titre, .titreColor{
 	color: olive !important;
-    border-color: olive !important;
 }
-.messageTotal{
-	background-color:#00000011 !important;
+.saisie{
+	color: olive !important;
 }
-.gauche {
-	border-color: olive !important;
-	color: dimgrey !important;
-	background-color: silver !important;
-}
-.droite {
-	border-color: olive !important;
-	color: dimgrey !important;
-	background-color: silver !important;
-}
-#envoi_message, #bouton_test, #combo, .clicClient:hover {
+.bouton, .boutonHover:hover{
 	background-color: olive !important;
 	color: #ffffff !important;
 }
-#message{
-	color: olive !important;
+.bouton:hover{
+	opacity:0.5 !important;
 }
-.grosTitre, .titre{
-	color: olive !important;
+.backColorTransp{
+	background-color:#00000011 !important;
+}
+.rectBord{
+	border-color: olive !important;
+	color: dimgrey !important;
+	background-color: silver !important;
+}
+.bord{
+    border-color: olive !important;
 }

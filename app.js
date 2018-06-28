@@ -2,30 +2,14 @@ var app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
-    fs = require('fs');
-	db = require('./db.js');
-	pg = require('pg');
-	//const { Client } = require('pg');
-	moment = require('moment');
-	
-//init postgres
-// pools will use environment variables
-// for connection information
-//const pool = new Pool()
-/*const client = new Client({
-  user: 'jlthbnkffnzbhy',
-  host: 'ec2-107-21-219-235.compute-1.amazonaws.com',
-  database: 'dtd7h0pdls9gb',
-  password: 'mS8zWIo7alGJRYDQ3Zb8cUwCXd',
-  port: 5432,
-  ssl : false,
-});*/
-/*var db_url = process.env.DATABASE_URL || "postgres://jlthbnkffnzbhy:mS8zWIo7alGJRYDQ3Zb8cUwCXd@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dtd7h0pdls9gb";
-const client = new Client({
-  connectionString: db_url,
-  ssl: false,
-});*/
+    fs = require('fs'),
+	db = require('./db.js'),
+	pg = require('pg'),
 
+	moment = require('moment');
+var path = require('path');
+var formidable = require('formidable');
+	
 var pseudos = [];
 var urls =[];
 var socketId =[];
@@ -66,31 +50,31 @@ function evalRating (pseudo) {
 
 // Chargement de la page index.html
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+	res.sendfile(__dirname + '/index.html');
 });
 
 app.get('/css/:name', function (req, res) {
-  var img = fs.readFileSync('./css/'+req.params.name);
-  res.writeHead(200, {'Content-Type': 'text/css' });
-  res.end(img, 'binary');
+	  var img = fs.readFileSync('./css/'+req.params.name);
+	  res.writeHead(200, {'Content-Type': 'text/css' });
+	  res.end(img, 'binary');
 });
 
 app.get('/emote/:name', function (req, res) {
-  var img = fs.readFileSync('./emote/'+req.params.name);
-  res.writeHead(200, {'Content-Type': 'image/png' });
-  res.end(img, 'binary');
+	  var img = fs.readFileSync('./emote/'+req.params.name);
+	  res.writeHead(200, {'Content-Type': 'image/png' });
+	  res.end(img, 'binary');
 });
 
 app.get('/image/:name', function (req, res) {
-  var img = fs.readFileSync('./image/'+req.params.name);
-  res.writeHead(200, {'Content-Type': 'image/png' });
-  res.end(img, 'binary');
+	  var img = fs.readFileSync('./image/'+req.params.name);
+	  res.writeHead(200, {'Content-Type': 'image/png' });
+	  res.end(img, 'binary');
 });
 
 app.get('/audio/:name', function (req, res) {
-  var img = fs.readFileSync('./audio/'+req.params.name);
-  res.writeHead(200, {'Content-Type': 'audio/mp3' });
-  res.end(img, 'binary');
+	  var img = fs.readFileSync('./audio/'+req.params.name);
+	  res.writeHead(200, {'Content-Type': 'audio/mp3' });
+	  res.end(img, 'binary');
 });
 
 app.use(function(req, res, next){
@@ -98,8 +82,71 @@ app.use(function(req, res, next){
     res.send(404, 'Page introuvable !');
 });
 
+//for upload
+app.post('/upload', function(req, res){
+	var tabNomFic = "";
+	// create an incoming form object
+	var form = new formidable.IncomingForm();
+
+	// specify that we want to allow the user to upload multiple files in a single request
+	form.multiples = true;
+
+	// store all uploads in the /uploads directory
+	form.uploadDir = path.join(__dirname, '/uploads');
+
+	// every time a file has been uploaded successfully,
+	// rename it to it's orignal name
+	form.on('file', function(field, file) {
+		tabNomFic += (tabNomFic!=""?"|":"")+file.name;
+		fs.rename(file.path, path.join(form.uploadDir, file.name), function (err) {
+			if (err) throw err;
+			//console.log('File Renamed.');
+		});
+	});
+
+	// log any errors that occur
+	form.on('error', function(err) {
+		console.log('An error has occured: \n' + err);
+	});
+
+	// once all the files have been uploaded, send a response to the client
+	form.on('end', function() {
+		res.end(tabNomFic);
+	});
+
+	// parse the incoming request containing the form data
+	form.parse(req);
+
+});
+
+app.get('/download/:name', function(req, res){
+	//console.log(req);
+	//console.log(res);
+	var file = './uploads/'+req.params.name;//__dirname + '/uploads/'+"arabesque.png";
+	res.download(file, function(err){
+		res.end("Error");
+	}); // Set disposition and send it.
+});
+
 io.sockets.on('connection', function (socket, pseudo) {
 	//console.log('Openning for ' + pseudo);
+	
+	socket.on('uploaded',function(data, destinataire){
+		console.log(data);
+		ajouteEtEnvoiMessage(data, destinataire, "fichier");
+	});
+	
+	socket.on('download',function(fichier){
+		console.log(fichier);
+		var file = __dirname + '/uploads/'+fichier;
+		res.download(file); // Set disposition and send it.
+		
+		// console.log(data);
+		// var file = fs.createWriteStream("uploads/"+data);
+		// var request = http.get("http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg", function(response) {
+		  // response.pipe(file);
+		// });
+	});
 	
 	socket.on('clients',function(){
 		//envoi des utilisateurs déja présent
@@ -134,7 +181,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
-					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
 				}
 			}
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
@@ -162,7 +209,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('row', function(row) {
 					//console.log(row);
 					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
-						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false});
 					}
 					//change row because message is call text, etc ...
 				})
@@ -196,7 +243,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
-					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
 				}
 			}
 			socket.emit('affiche_plus_fin');
@@ -224,7 +271,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('row', function(row) {
 					//console.log(row);
 					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
-						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, date: moment(row.date).format(msgDateFormat), debut: false});
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false});
 					}
 					//change row because message is call text, etc ...
 				})
@@ -295,13 +342,13 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
-				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /clear : efface les dessins \n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
+				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /fluid : bascule l'affichage entre Fluide et Centré \n • /clear : efface les dessins \n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
 			}
 			if(message == '/harlem'){
 				//fait trembler lecran !		
@@ -315,6 +362,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//efface cookie pour reecrire pseudo/image		
 				socket.emit('clear');
 			}
+			if(message == '/fluid'){
+				//met la page en affichage 100% en largeur quand fluid et centré quand pas fluid
+				socket.emit('fluid');
+			}
 			if(message == '/wizz'){
 				//socket.get('pseudo', function (error, pseudo) {
 				pseudo = socket.pseudo;
@@ -324,16 +375,16 @@ io.sockets.on('connection', function (socket, pseudo) {
 						message = pseudo+" a envoyé un wizz à " + destinataire + " !";
 						message = ent.encode(message);
 						socket.emit('wizz');
-						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
 						if(destinataire=="Tous"){
 							socket.broadcast.emit('wizz');
-							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
 						}else{
 							for(var i=0;i<pseudos.length;i++){
 								if(pseudos[i]==destinataire){
 									if(io.sockets.connected[socketId[i]]!="undefined"){
 										io.sockets.connected[socketId[i]].emit('wizz');
-										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, date: moment(dat).format("HH:mm:ss"), debut: true});
+										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
 									}
 								}
 							}
@@ -347,51 +398,57 @@ io.sockets.on('connection', function (socket, pseudo) {
 			}
 		}else{
 			//socket.get('pseudo', function (error, pseudo) {
-			pseudo = socket.pseudo;
-			if(evalRating(pseudo)){
-				addRatingEntry(pseudo);
-				message = ent.encode(message);
-				socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
-				if(destinataire=="Tous"){
-					socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
-				}else{
-					for(var i=0;i<pseudos.length;i++){
-						if(pseudos[i]==destinataire){
-							//io.sockets.connected permet d'envoyer seulement a la personne voulu
-							if(io.sockets.connected[socketId[i]]!="undefined"){
-								io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, date: moment(dat).format(msgDateFormat), debut: true});
-							}
-							break;
-						}
-					}
-				}
-				
-				//ajout dans la BDD
-				if(bdd == 'mysql'){
-					db.connect('localhost','5454','Elisath','Elisath','vickychat');
-					var sqlInsert = "insert into historiquechat (pseudo,destinataire,text,date) values('" + pseudo + "','" + destinataire + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
-					db.executeInsertQuery(sqlInsert);
-					db.close();
-				}
-				if(bdd == 'pgsql'){
-					pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-					  if (err) throw err;
-					  console.log('Connected to postgres! Getting schemas...');
-
-					  client
-						.query("insert into historiquechat (pseudo,text,date) values('" + pseudo + "','" + destinataire + "','" + message + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
-					  done();
-					});
-					pg.end();
-				}
-			}else{
-				//for(var i=0;i<10;i++)
-					addRatingEntry(pseudo);
-				socket.emit('flood');
-			}
+			ajouteEtEnvoiMessage(message, destinataire, "");
 			//});
 		}
     }); 
+	
+	function ajouteEtEnvoiMessage(message, destinataire, type){
+		var pseudo;
+		var dat = moment();
+		pseudo = socket.pseudo;
+		if(evalRating(pseudo)){
+			addRatingEntry(pseudo);
+			message = ent.encode(message);
+			socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+			if(destinataire=="Tous"){
+				socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+			}else{
+				for(var i=0;i<pseudos.length;i++){
+					if(pseudos[i]==destinataire){
+						//io.sockets.connected permet d'envoyer seulement a la personne voulu
+						if(io.sockets.connected[socketId[i]]!="undefined"){
+							io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+						}
+						break;
+					}
+				}
+			}
+			
+			//ajout dans la BDD
+			if(bdd == 'mysql'){
+				db.connect('localhost','5454','Elisath','Elisath','vickychat');
+				var sqlInsert = "insert into historiquechat (pseudo,destinataire,text,type,date) values('" + pseudo + "','" + destinataire + "','" + message + "','" + type + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ";
+				db.executeInsertQuery(sqlInsert);
+				db.close();
+			}
+			if(bdd == 'pgsql'){
+				pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+				  if (err) throw err;
+				  console.log('Connected to postgres! Getting schemas...');
+
+				  client
+					.query("insert into historiquechat (pseudo,text,type,date) values('" + pseudo + "','" + destinataire + "','" + message + "','" + type + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
+				  done();
+				});
+				pg.end();
+			}
+		}else{
+			//for(var i=0;i<10;i++)
+				addRatingEntry(pseudo);
+			socket.emit('flood');
+		}
+	}
 	
 	//quand un client deco
 	socket.on('clientparti',function(){

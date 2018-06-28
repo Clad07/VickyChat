@@ -14,6 +14,7 @@
     </head>
 	
     <body>
+		<!-- <iframe id="my_iframe" style="display:none;"></iframe> -->
 		<div id="canv">
 			<canvas id="paper" width="5000px" height="5000px">
 				Your browser needs to support canvas for this to work!
@@ -22,11 +23,11 @@
 				<!-- The mouse pointers will be created here -->
 			</div>
 		</div>
-		<div id="all" class="container-fluid">
+		<div id="all" class="container">
 			<div class="row">
 				
 				<div id="droite" class="col-12 col-md-5 col-lg-4 col-xl-3 order-md-last">
-					<div class="droite row">
+					<div class="rectBord row">
 						<div class="col-12">
 							<div class="row">
 								<div class="col-12">
@@ -38,7 +39,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="droite row">
+					<div class="rectBord row">
 						<div class="col-12">
 							<div class="row">
 								<div class="col-12">
@@ -61,11 +62,13 @@
 									<div id="styleFF7" class="style"></div>
 								</div>	
 							</div>
+
+							
 						</div>
 					</div>	
 				</div>
 				<div id="gauche" class="col-12 col-md-7 col-lg-8 col-xl-9 order-md-first">
-					<div id="form" class ="gauche row">
+					<div id="form" class ="rectBord row">
 						<div class="col-12">
 							<form action="/" method="post" id="formulaire_chat">
 								<div class="row no-gutters">
@@ -85,7 +88,7 @@
 												<span class="fas fa-arrow-down titre"></span>
 											</div>
 											<div class="col-12 col-sm-4 colAlignCenter align-self-center">
-												<select name="combo" id="combo" class="">
+												<select name="combo" id="combo" class="bouton">
 													<option value="Tous">Tous</option>
 												</select>
 											</div>
@@ -94,30 +97,57 @@
 			
 								</div>
 								<div class="row no-gutters">
-									<div class="col-12">
-										<textarea name="message" id="message" placeholder="Votre message..."></textarea>
+									<div class="col-12 col-sm">
+										<textarea name="message" id="message" placeholder="Votre message... /help pour les commandes" class="saisie"></textarea>
 									<!-- </div> -->
 									<!-- <div class="col-6 col-sm-3 colAlignCenter"> -->
-										<input type="submit" id="envoi_message" value="Envoyer" />
 									</div>
-									
+									<div class="col-6 col-sm-auto colAlignCenter">
+										<button type="submit" id="envoi_message" class="bouton">Envoyer <i class='fas fa-share-square'></i></button>
+									</div>
+									<div class="col-6 col-sm-auto colAlignCenter">
+										<input id="upload-input" type="file" name="uploads[]" multiple="multiple" />
+										<button class="upload-btn bouton" type="button">Upload <i class="fas fa-upload"></i></button>
+									</div>
 								</div>
-							
+								<div class="row no-gutters">
+									<div class="col-12">
+										<div class="progress">
+										  <div class="progress-bar" role="progressbar"></div>
+										</div>
+									</div>
+								</div>
 								<div id="zone_client_ecrit" class="row no-gutters">
 									<div class="col-12">
 										<span>En train d'écrire :</span>
 									</div>
 									<div class="col-12 colAlignCenter" style="display:none;"> 
-										<button id="bouton_test" name="button">Cliquez sur moi :)</button>
+										<button id="bouton_test" name="button" class="bouton">Cliquez sur moi :)</button>
 									</div>
 								</div>
 							</form>
 						</div>
 					</div>
-					<div id="zone_chat" class ="gauche row">
+					<div id="zone_chat" class ="rectBord row">
 							
 					</div>
 				</div>
+			</div>
+		</div>
+		<div id="top" class="container-fluid backColorTransp" onclick="goTop()">
+			<div class="row">
+				<div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-sm-4 col-md-3 col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-md-3 col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-lg-2 col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
+				<div class="col-xl-1 fas fa-arrow-up titreColor"></div>
 			</div>
 		</div>
 		<script>
@@ -144,6 +174,10 @@
 				return new Promise(resolve => setTimeout(resolve, ms));
 			}
 			
+			function goTop(){
+				document.body.scrollTop = 0; // For Safari
+				document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+			}
 			
 			async function globalStyle(styleCss){
 				$('link[id="link"]').attr('href','css/style'+styleCss+'.css');
@@ -208,10 +242,13 @@
 			
 			var url = readCookie("image");
 			
-			var cookie = readCookie("style");
+			var style = readCookie("style");
 			
-			if(cookie != null) 
-				$('link[id="link"]').attr('href','css/'+cookie+'.css');
+			if(style != null) 
+				$('link[id="link"]').attr('href','css/'+style+'.css');
+			
+			var fluid = readCookie("fluid") =="true" ;
+			$("#all").attr('class', 'container'+((fluid)?("-fluid"):("")));
 			
 			if(pseudo == null || url == null){
 				// On demande le pseudo
@@ -298,7 +335,7 @@
 			
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.destinataire, data.message, data.date, data.debut);
+                insereMessage(data.pseudo, data.destinataire, data.message, data.type, data.date, data.debut);
 				if(document.body.className == 'blurred'){
 					PageTitleNotification.Off();
 					PageTitleNotification.On(data.pseudo + " a écrit un message");
@@ -352,7 +389,7 @@
 			
 								
 			function appendClient(pseudo, url){
-				$('#zone_util').append('<div class="col-12 col-sm-6 col-md-12"><div class="clicClient row" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><div class="col-4"><img class="avatarMini" src="'+url+'"></div><div class="pseudoMini col-8">'+ pseudo + '</div></div></div>');
+				$('#zone_util').append('<div class="col-12 col-sm-6 col-md-12"><div class="clicClient boutonHover row" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><div class="col-4"><img class="avatarMini" src="'+url+'"></div><div class="pseudoMini col-8">'+ pseudo + '</div></div></div>');
 				$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '">' + pseudo + '</option>');
 			}
 								
@@ -392,7 +429,7 @@
 			
 			
             // Ajoute un message dans la page
-            function insereMessage(pseudo, destinataire, message, date, debut) {
+            function insereMessage(pseudo, destinataire, message, type, date, debut) {
 				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/fuck.png" title=":mlm:"/>');
 				message = message.replace(/&colon;MLM&colon;/g, '<img src="/emote/fuck.gif" title=":MLM:"/>');
 				message = message.replace(/&colon;cafe&colon;/g, '<img src="/emote/cafe.png" title=":cafe:"/>');
@@ -408,23 +445,34 @@
 				message = message.replace(/&Hat;&Hat;/gi, '<img src="/emote/Grin.png" title="^^"/>');
 				message = message.replace(/&colon;o/gi, '<img src="/emote/Gasp.png" title=":o"/>');
 				message = message.replace(/&colon;p/gi, '<img src="/emote/Yuck.png" title=":p"/>');
-				if(pseudo == ""){
+				if(type == "/"){
 					if(debut){
 						$('#zone_chat').prepend('<div class="info">'+ date + " : " + message + '</div>');
 					}else{
 						$('#zone_chat').append('<div class="info">'+ date + " : " + message + '</div>');
 					}
-				}else{
-					pseudo = '<span class="titre emetteur">' + pseudo + '</span>';
-					var vers = '<span class="vers fas fa-arrow-right"></span>';
+				}else {
+					pseudo = '<span class="titre emetteur bord">' + pseudo + '</span>';
+					var vers = '<span class="vers fas fa-arrow-right bord"></span>';
 					if(destinataire=="Tous"){
 						destinataire = '<span class="titre destinataire destTous">' + destinataire + '</span>';
 					}
 					else{
-						destinataire = '<span class="titre destinataire">' + destinataire + '</span>';
+						destinataire = '<span class="titre destinataire bord">' + destinataire + '</span>';
 					}
 					date = '<span class="date">' + date + '</span>';
-					var messageTotal = '<div class="messageTotal"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';
+					console.log(type);
+					if(type == "fichier"){
+						//si type fichier, split les noms de fichier et les afficher en hyperlien pour clic download
+						var ficList = message.split('&VerticalLine;');
+						message = "";
+						ficList.forEach(function(element) {
+							console.log(element);
+							var url = "/download/"+element;
+							message += '<span class="fichier boutonHover" onclick="downloadFichier(\'' + element + '\')">lololol<i class="fas fa-download fichierIcon"></i>' + element + '<a href="' + url + '" download>Test</a></span>';
+						});
+					}
+					var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';
 					if(debut){
 						$('#zone_chat').prepend(messageTotal);
 					}else{
@@ -433,6 +481,22 @@
 				}
 				$('#canv').height($('#gauche').outerHeight(true)+50);
             }
+			
+			//var $idown;  // Keep it outside of the function, so it's initialized once.
+			function downloadFichier(fichier){
+				//alert(fichier);
+				//socket.emit('download',fichier);
+				//document.getElementById('my_iframe').src = ip+"/uploads/"+fichier;
+				/*var url = ip+"/uploads/"+fichier;
+				if ($idown) {
+					$idown.attr('src',url);
+				} else {
+					$idown = $('<iframe>', { id:'idown', src:url }).hide().appendTo('body');
+				}*/
+				alert($(this).text());
+				alert($(this).find("a:first-child").text());
+				//$idown.click();
+			}
 		
 			//gestion des cookies
 			function createCookie(name,value,days) {
@@ -634,12 +698,91 @@
 				ctx.beginPath();
             });
 			
+			socket.on('fluid', function() {
+				fluid = !fluid;
+				createCookie("fluid",fluid,356);
+				$("#all").attr('class', 'container'+((fluid)?("-fluid"):("")));
+            });
+			
 			socket.on('wizz', function() {
 					var snd = new Audio("/audio/hey.mp3"); // buffers automatically when created
 					snd.play();
 					$( "#all" ).effect( "shake", {times:4, distance:50, direction:"left"}, 500  );
 					//$( "#all" ).effect( "shake", {times:4, distance:50, direction:"up"}, 500  );
 					//$( "#all" ).effect( "shake", {times:2, distance:50, direction:"left"}, 500  );
+            });
+			
+	/****** code for upload  *******/
+			$('.upload-btn').on('click', function (){
+				$('#upload-input').click();
+				$('.progress-bar').text('0%');
+				$('.progress-bar').width('0%');
+			});
+
+			$('#upload-input').on('change', function(){
+
+			  var files = $(this).get(0).files;
+
+			  if (files.length > 0){
+				// create a FormData object which will be sent as the data payload in the
+				// AJAX request
+				var formData = new FormData();
+
+				// loop through all the selected files and add them to the formData object
+				for (var i = 0; i < files.length; i++) {
+				  var file = files[i];
+
+				  // add the files to formData object for the data payload
+				  formData.append('uploads[]', file, file.name);
+				}
+
+				$.ajax({
+				  url: '/upload',
+				  type: 'POST',
+				  data: formData,
+				  processData: false,
+				  contentType: false,
+				  success: function(data){
+					  console.log('upload successful!\n n:' + data);
+					  var dest = $('#combo option:selected').val();
+					  socket.emit('uploaded', data, dest);
+				  },
+				  xhr: function() {
+					// create an XMLHttpRequest
+					var xhr = new XMLHttpRequest();
+
+					// listen to the 'progress' event
+					xhr.upload.addEventListener('progress', function(evt) {
+
+					  if (evt.lengthComputable) {
+						// calculate the percentage of upload completed
+						var percentComplete = evt.loaded / evt.total;
+						percentComplete = parseInt(percentComplete * 100);
+
+						// update the Bootstrap progress bar with the new percentage
+						$('.progress-bar').text(percentComplete + '%');
+						$('.progress-bar').width(percentComplete + '%');
+
+						// once the upload reaches 100%, set the progress bar text to done
+						if (percentComplete === 100) {
+						  $('.progress-bar').html('Terminé');
+						}
+
+					  }
+
+					}, false);
+
+					return xhr;
+				  }
+				});
+
+			  }
+			});
+		
+			socket.on('uploaded', function(nomFic) {
+				alert(nomFic);
+					var dest = $('#combo option:selected').val();
+					socket.emit('message', nomFic, dest);
             });
 			
 			function infiniteScroll(){
@@ -651,12 +794,20 @@
 				$('#zone_chat').append('<div id="loader"><center><img src="https://loading.io/spinners/microsoft/lg.rotating-balls-spinner.gif" alt="loader ajax"></center></div>');
 				
 				$('#zone_chat #loader').fadeOut(400);	
-				
+				$('#top').fadeOut(10);
 				
 				var deviceAgent = navigator.userAgent.toLowerCase();
 				var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
 
 				$(window).scroll(function() {
+					//affiche ou masque div #top
+					if($(window).scrollTop()==0){
+						$('#top').fadeOut(1000);
+					}
+					else{
+						$('#top').fadeIn(1000);
+					}
+					
 					// On teste si ajaxready vaut false, auquel cas on stoppe la fonction
 					if ($(window).data('ajaxready') == false) return;
 

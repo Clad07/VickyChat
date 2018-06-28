@@ -1,11 +1,13 @@
 {
   "name": "app",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "private": true,
   "dependencies": {
     "ent": "~0.1.0",
     "express": "~3.3.4",
-    "moment": "^2.10.2",
-    "mysql": "~2.5.4",
+    "formidable": "^1.2.1",
+    "moment": "^2.22.2",
+    "mysql": "^2.15.0",
     "pg": "4.4.3",
     "socket.io": "~1.2.1"
   },
@@ -17,5 +19,5 @@
     "start": "node app.js"
   },
   "author": "Clad07",
-  "description": "Un super Chat temps réel avec socket.io"
+  "description": "VickyChat"
 }
