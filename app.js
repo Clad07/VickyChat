@@ -482,23 +482,23 @@ io.sockets.on('connection', function (socket, pseudo) {
 	
 	//for mini draw
 	// Start listening for mouse move events
-    socket.on('mousemove', function (data/*, destinataire*/) {
+    socket.on('mousemove', function (data, destinataire) {
         // This line sends the event (broadcasts it)
         // to everyone except the originating client.
-		socket.broadcast.emit('moving', data);
-		// if(destinataire=="Tous"){
-			// socket.broadcast.emit('moving', data);
-		// }else{
-			// for(var i=0;i<pseudos.length;i++){
-				// if(pseudos[i]==destinataire){
-					// //io.sockets.connected permet d'envoyer seulement a la personne voulu
-					// if(io.sockets.connected[socketId[i]]!="undefined"){
-						// io.sockets.connected[socketId[i]].emit('moving', data);
-					// }
-					// break;
-				// }
-			// }
-		// }
+		
+		if(destinataire=="Tous"){
+			socket.broadcast.emit('moving', data);
+		}else{
+			for(var i=0;i<pseudos.length;i++){
+				if(pseudos[i]==destinataire){
+					//io.sockets.connected permet d'envoyer seulement a la personne voulu
+					if(io.sockets.connected[socketId[i]]!="undefined"){
+						io.sockets.connected[socketId[i]].emit('moving', data);
+					}
+					break;
+				}
+			}
+		}
 		
         
     });
