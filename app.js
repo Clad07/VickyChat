@@ -438,7 +438,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				  console.log('Connected to postgres! Getting schemas...');
 
 				  client
-					.query("insert into historiquechat (pseudo,text,type,date) values('" + pseudo + "','" + destinataire + "','" + message + "','" + type + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
+					.query("insert into historiquechat (pseudo,destinataire,text,type,date) values('" + pseudo + "','" + destinataire + "','" + message + "','" + type + "','"+moment(dat).format("YYYY-MM-DD HH:mm:ss")+"') ");
 				  done();
 				});
 				pg.end();
