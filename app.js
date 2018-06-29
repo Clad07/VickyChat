@@ -334,6 +334,19 @@ io.sockets.on('connection', function (socket, pseudo) {
 		var pseudo;
 		var dat = moment();
 		if(message[0] == '/'){
+			if(message == '/effacerToutLesFichiers'){
+				const directory = 'uploads';
+				fs.readdir(directory, (err, files) => {
+				  if (err) throw err;
+
+				  for (const file of files) {
+					fs.unlink(path.join(directory, file), err => {
+					  if (err) throw err;
+					});
+				  }
+				});
+				socket.emit('effacerToutLesFichiers');
+			}
 			if(message == '/emote'){
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
