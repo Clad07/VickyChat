@@ -205,6 +205,9 @@ body{
 	color:inherit;
 	text-decoration:none;
 }
+#zone_chat .barrer{
+	text-decoration:line-through;
+}
 .bouton:hover, .boutonHover:hover, .style:hover{	
 	touch-action: manipulation;
 	cursor: pointer;

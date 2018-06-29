@@ -336,7 +336,7 @@
 			
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.destinataire, data.message, data.type, data.date, data.debut);
+                insereMessage(data.pseudo, data.destinataire, data.message, data.type, data.date, data.debut, data.divers);
 				if(document.body.className == 'blurred'){
 					PageTitleNotification.Off();
 					PageTitleNotification.On(data.pseudo + " a écrit un message");
@@ -433,7 +433,7 @@
 			
 			
             // Ajoute un message dans la page
-            function insereMessage(pseudo, destinataire, message, type, date, debut) {
+            function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
 				message = message.replace(/&colon;mlm&colon;/g, '<img src="/emote/fuck.png" title=":mlm:"/>');
 				message = message.replace(/&colon;MLM&colon;/g, '<img src="/emote/fuck.gif" title=":MLM:"/>');
 				message = message.replace(/&colon;cafe&colon;/g, '<img src="/emote/cafe.png" title=":cafe:"/>');
@@ -469,11 +469,13 @@
 					if(type == "fichier"){
 						//si type fichier, split les noms de fichier et les afficher en hyperlien pour clic download
 						var ficList = message.split('&VerticalLine;');
+						//de plus, split divers qui contient, pour cuaque fichier, l'info de le barrer ou non (barrer su fichier delete)
+						var divList = divers.split('&VerticalLine;');
 						message = "";
+						var i=0;
 						ficList.forEach(function(element) {
-							console.log(element);
 							var url = element;
-							message += '<span id="span" class="fichier boutonHover" onclick="downloadFichier(\'' + element + '\')"><i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
+							message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')"><i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 						});
 					}
 					var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';

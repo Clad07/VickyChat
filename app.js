@@ -133,6 +133,28 @@ app.get('/download/:name', function(req, res){
 	}); // Set disposition and send it.
 });
 
+function barrerSiTypeFichierEtFileExist(type, message){
+	var divers = "";
+	var decodeMess = ent.decode(message);
+	if(type=="fichier"){
+		var ficList = decodeMess.split('&VerticalLine;');
+		ficList.forEach(function(element) {
+			divers += (divers!=""?"|":"");
+			if(fileExist(element)){
+				divers += "rien";
+			}else{
+				divers += "barrer";
+			}
+		});
+	}
+	return divers;
+}
+
+function fileExist(fichier){
+	var file = './uploads/'+fichier;
+	return fs.existsSync(file);
+}
+
 io.sockets.on('connection', function (socket, pseudo) {
 	//console.log('Openning for ' + pseudo);
 	
@@ -141,10 +163,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 		ajouteEtEnvoiMessage(data, destinataire, "fichier");
 	});
 	
+	
+	
 	socket.on('download',function(fichier){
 		console.log(socket.pseudo+" telecharge "+fichier);
-		var file = './uploads/'+fichier;
-		socket.emit('download', fs.existsSync(file), fichier);
+		//var file = './uploads/'+fichier;
+		socket.emit('download', fileExist(fichier), fichier);
 	});
 	
 	socket.on('clients',function(){
@@ -180,7 +204,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
-					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false, divers: barrerSiTypeFichierEtFileExist(row[key].type, row[key].text)});
 				}
 			}
 			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
@@ -208,7 +232,8 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('row', function(row) {
 					//console.log(row);
 					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
-						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false});
+						var divers = barrerSiTypeFichierEtFileExist(row.type, row.text);
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false, divers: barrerSiTypeFichierEtFileExist(row.type, row.text)});
 					}
 					//change row because message is call text, etc ...
 				})
@@ -242,7 +267,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			for(var key = row.length-1; key>=0; key--){
 				//console.log({pseudo: row[key].pseudo, message: row[key].text, date: moment(row[key].date).format("HH:mm:ss")});
 				if(row[key].pseudo == pseudo || row[key].destinataire == pseudo || row[key].destinataire == "Tous"){
-					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false});
+					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false, divers: barrerSiTypeFichierEtFileExist(row[key].type, row[key].text)});
 				}
 			}
 			socket.emit('affiche_plus_fin');
@@ -270,7 +295,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 				.on('row', function(row) {
 					//console.log(row);
 					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
-						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false});
+						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false, divers: barrerSiTypeFichierEtFileExist(row.type, row.text)});
 					}
 					//change row because message is call text, etc ...
 				})
@@ -354,13 +379,13 @@ io.sockets.on('connection', function (socket, pseudo) {
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
 				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /fluid : bascule l'affichage entre Fluide et Centré \n • /clear : efface les dessins \n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
 				message = ent.encode(message);
-				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
+				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 			}
 			if(message == '/harlem'){
 				//fait trembler lecran !		
@@ -387,16 +412,16 @@ io.sockets.on('connection', function (socket, pseudo) {
 						message = pseudo+" a envoyé un wizz à " + destinataire + " !";
 						message = ent.encode(message);
 						socket.emit('wizz');
-						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
+						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 						if(destinataire=="Tous"){
 							socket.broadcast.emit('wizz');
-							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
+							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 						}else{
 							for(var i=0;i<pseudos.length;i++){
 								if(pseudos[i]==destinataire){
 									if(io.sockets.connected[socketId[i]]!="undefined"){
 										io.sockets.connected[socketId[i]].emit('wizz');
-										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true});
+										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 									}
 								}
 							}
@@ -417,20 +442,23 @@ io.sockets.on('connection', function (socket, pseudo) {
 	
 	function ajouteEtEnvoiMessage(message, destinataire, type){
 		var pseudo;
+		// pas besoins de tester le fichier (si cest un mesage de tyepe fichier) car celui ci vient a linstant detre upload, il serait etrange quil soit deja delete.
+		var divers = "";
 		var dat = moment();
 		pseudo = socket.pseudo;
 		if(evalRating(pseudo)){
 			addRatingEntry(pseudo);
 			message = ent.encode(message);
-			socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+			
+			socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true, divers: ""});
 			if(destinataire=="Tous"){
-				socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+				socket.broadcast.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true, divers: ""});
 			}else{
 				for(var i=0;i<pseudos.length;i++){
 					if(pseudos[i]==destinataire){
 						//io.sockets.connected permet d'envoyer seulement a la personne voulu
 						if(io.sockets.connected[socketId[i]]!="undefined"){
-							io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true});
+							io.sockets.connected[socketId[i]].emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true, divers: ""});
 						}
 						break;
 					}
