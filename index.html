@@ -121,11 +121,11 @@
 									<div class="col-12">
 										<span>En train d'écrire :</span>
 									</div>
-									<div class="col-12 colAlignCenter" style="display:none;"> 
-										<button id="bouton_test" name="button" class="bouton">Cliquez sur moi :)</button>
-									</div>
 								</div>
 							</form>
+							<div class="col-12 colAlignCenter" style="display:none;"> 
+								<button id="bouton_test" class="bouton">Cliquez sur moi :)</button>
+							</div>
 						</div>
 					</div>
 					<div id="zone_chat" class ="rectBord row">
@@ -167,8 +167,8 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
-		<script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-		<!-- <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
+		<!-- <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script> -->
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
 			function sleep(ms) {
@@ -291,6 +291,13 @@
 			});
 			
 			$('#bouton_test').click(function(event) {
+				<!-- var message = $('#message').val(); -->
+				<!-- alert(message.slice(0, $('#message').selectionStart).length); -->
+				<!-- var $txt = jQuery("#message"); -->
+				<!-- var caretPos = $txt[0].selectionStart; -->
+				<!-- var textAreaTxt = $txt.val(); -->
+				<!-- var txtToAdd = "stuff"; -->
+				<!-- $txt.val(textAreaTxt.substring(0, caretPos) + txtToAdd + textAreaTxt.substring(caretPos) ); -->
 				socket.emit('bouton_test');
 			});
 			socket.on('bouton_test', function(info) {
@@ -410,7 +417,7 @@
 
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             $('#formulaire_chat').submit(function () {
-                var message = $('#message').val();
+				var message = $('#message').val();
 				var dest = $('#combo option:selected').val();
 				if(message != ""){
 					socket.emit('message', message, dest); // Transmet le message aux autres
@@ -616,20 +623,6 @@
 			function eraseCookie(name) {
 				createCookie(name,"",-1);
 			}
-			/*var dat = new Date();
-			alert(dat.toISOString());
-			alert(dat.toLocaleString());
-			alert(dat.toISOString().slice(0, 19).replace('T', ' '));
-			alert(dat.toUTCString().slice(0, 19).replace('T', ' '));*/
-			//for mini draw
-			/* resize the canvas to fill browser window dynamically
-			window.addEventListener('resize', resizeCanvas, false);
-
-			function resizeCanvas() {
-					canvas.width = window.innerWidth;
-					canvas.height = window.innerHeight;
-			}
-			resizeCanvas();*/
 			
 			var canvas = $('#paper');
 			var	ctx = canvas[0].getContext('2d');
@@ -846,21 +839,6 @@
 
 						socket.emit('affiche_plus', offset);
 						offset++;
-						//await sleep(2000);
-						/*$.get('more.php?' + offset, function(data){
-						if (data != '') {
-						$('#content #loader').before(data);
-						$('#content .hidden').fadeIn(400);
-						offset+= 10;
-						// une fois tous les traitements effectués,
-						// on remet ajaxready à false 
-						// afin de pouvoir rappeler la fonction
-						$(window).data('ajaxready', true);
-						}
-
-						$('#content #loader').fadeOut(400);			
-						});*/
-						
 					}
 				});
 			};
