@@ -138,14 +138,10 @@ io.sockets.on('connection', function (socket, pseudo) {
 	
 	socket.on('download',function(fichier){
 		console.log(fichier);
-		var file = __dirname + '/uploads/'+fichier;
-		res.download(file); // Set disposition and send it.
-		
-		// console.log(data);
-		// var file = fs.createWriteStream("uploads/"+data);
-		// var request = http.get("http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg", function(response) {
-		  // response.pipe(file);
-		// });
+		var file = './uploads/'+fichier;
+		console.log(file);
+		console.log(fs.existsSync(file));
+		socket.emit('download', fs.existsSync(file), fichier);
 	});
 	
 	socket.on('clients',function(){

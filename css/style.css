@@ -118,24 +118,6 @@ body{
 	font-size: 1em !important;
 	height:25px !important;
 }
-#upload-input {
-  display: none;
-}
-.upload-btn {
-  color: #ffffff;
-  background-color: #F89406;
-  border: none;
-}
-
-.upload-btn:hover,
-.upload-btn:focus,
-.upload-btn:active,
-.upload-btn.active {
-  color: #ffffff;
-  background-color: #FA8900;
-  border: none;
-}
-
 
 /****** Zone liste utilisateurs ******/
 
@@ -223,10 +205,14 @@ body{
 	color:inherit;
 	text-decoration:none;
 }
+.bouton:hover, .boutonHover:hover, .style:hover{	
+	touch-action: manipulation;
+	cursor: pointer;
+}
 #zone_chat .fichierIcon{
 	margin-right:10px;
 }
-
+    
 /****** Pour theme ******/
 
 .grosTitre, .titre, .titreColor{

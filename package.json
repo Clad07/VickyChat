@@ -19,5 +19,6 @@
     "start": "node app.js"
   },
   "author": "Clad07",
-  "description": "VickyChat"
+  "description": "VickyChat",
+  "license": "MIT"
 }

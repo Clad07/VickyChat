@@ -469,8 +469,8 @@
 						message = "";
 						ficList.forEach(function(element) {
 							console.log(element);
-							var url = "/download/"+element;
-							message += '<span class="fichier boutonHover" onclick="downloadFichier(\'' + element + '\')">lololol<i class="fas fa-download fichierIcon"></i>' + element + '<a href="' + url + '" download>Test</a></span>';
+							var url = element;
+							message += '<span id="span" class="fichier boutonHover" onclick="downloadFichier(\'' + element + '\')"><i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 						});
 					}
 					var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message">' + message + '</div></div>';
@@ -486,7 +486,9 @@
 			//var $idown;  // Keep it outside of the function, so it's initialized once.
 			function downloadFichier(fichier){
 				//alert(fichier);
-				//socket.emit('download',fichier);
+				<!-- var aItem = $(event).find('a').first(); -->
+				<!-- var aHref = aItem.attr('href'); -->
+				socket.emit('download',fichier);
 				//document.getElementById('my_iframe').src = ip+"/uploads/"+fichier;
 				/*var url = ip+"/uploads/"+fichier;
 				if ($idown) {
@@ -494,10 +496,18 @@
 				} else {
 					$idown = $('<iframe>', { id:'idown', src:url }).hide().appendTo('body');
 				}*/
-				alert($(this).text());
-				alert($(this).find("a:first-child").text());
-				//$idown.click();
+				//aItem.click();
 			}
+			
+			socket.on('download', function(fileExist, fichier){
+				if(fileExist){
+					window.location.href = "/download/"+fichier;
+				}else{
+					alert("Le fichier n'existe plus sur le serveur.");
+				}
+			});
+			
+				
 		
 			//gestion des cookies
 			function createCookie(name,value,days) {
