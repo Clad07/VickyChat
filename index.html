@@ -421,7 +421,10 @@
             });
 			
 			$(window).on('beforeunload',function () {
-				
+				if(block_beforeunload){
+					block_beforeunload = false;
+					return;
+				}
 				socket.emit('client_ecrit_fin');
 				socket.emit('clientparti');
 				//return "Bye now!";
@@ -501,8 +504,12 @@
 				//aItem.click();
 			}
 			
+			//variable pour empecher le navigateur de croire que le client part quand il DL un fichier
+			var block_beforeunload = false;
+			
 			socket.on('download', function(fileExist, fichier){
 				if(fileExist){
+					block_beforeunload = true;
 					window.location.href = "/download/"+fichier;
 				}else{
 					alert("Le fichier n'existe plus sur le serveur.");

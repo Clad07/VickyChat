@@ -5,10 +5,9 @@ var app = require('express')(),
     fs = require('fs'),
 	db = require('./db.js'),
 	pg = require('pg'),
-
-	moment = require('moment');
-var path = require('path');
-var formidable = require('formidable');
+	moment = require('moment'),
+	formidable = require('formidable'),
+	path = require('path');
 	
 var pseudos = [];
 var urls =[];
@@ -84,6 +83,12 @@ app.use(function(req, res, next){
 
 //for upload
 app.post('/upload', function(req, res){
+	var dir = './uploads';
+
+	if (!fs.existsSync(dir)){
+		fs.mkdirSync(dir);
+	}
+
 	var tabNomFic = "";
 	// create an incoming form object
 	var form = new formidable.IncomingForm();
@@ -92,13 +97,13 @@ app.post('/upload', function(req, res){
 	form.multiples = true;
 
 	// store all uploads in the /uploads directory
-	form.uploadDir = path.join(__dirname, '/uploads');
+	form.uploadDir = dir;
 
 	// every time a file has been uploaded successfully,
 	// rename it to it's orignal name
 	form.on('file', function(field, file) {
 		tabNomFic += (tabNomFic!=""?"|":"")+file.name;
-		fs.rename(file.path, path.join(form.uploadDir, file.name), function (err) {
+		fs.rename(file.path, path.join(dir,file.name), function (err) {
 			if (err) throw err;
 			//console.log('File Renamed.');
 		});
@@ -132,15 +137,13 @@ io.sockets.on('connection', function (socket, pseudo) {
 	//console.log('Openning for ' + pseudo);
 	
 	socket.on('uploaded',function(data, destinataire){
-		console.log(data);
+		console.log(socket.pseudo+" envoi "+data+" a "+destinataire);
 		ajouteEtEnvoiMessage(data, destinataire, "fichier");
 	});
 	
 	socket.on('download',function(fichier){
-		console.log(fichier);
+		console.log(socket.pseudo+" telecharge "+fichier);
 		var file = './uploads/'+fichier;
-		console.log(file);
-		console.log(fs.existsSync(file));
 		socket.emit('download', fs.existsSync(file), fichier);
 	});
 	
@@ -335,7 +338,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		var dat = moment();
 		if(message[0] == '/'){
 			if(message == '/effacerToutLesFichiers'){
-				const directory = 'uploads';
+				const directory = './uploads';
 				fs.readdir(directory, (err, files) => {
 				  if (err) throw err;
 
