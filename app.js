@@ -5,7 +5,7 @@ var app = require('express')(),
     fs = require('fs'),
 	db = require('./db.js'),
 	pg = require('pg'),
-	moment = require('moment'),
+	moment = require('moment-timezone'),
 	formidable = require('formidable'),
 	path = require('path');
 	
@@ -16,6 +16,7 @@ var pseudosWriting = [];
 //var bdd = 'mysql';
 var bdd = 'pgsql';
 moment.locale('fr');
+moment.tz.setDefault('Europe/Paris');
 var msgDateFormat = "[le] Do MMMM YYYY [à] HH:mm:ss";
 var nbMsg = 10;
 
@@ -155,15 +156,37 @@ function fileExist(fichier){
 	return fs.existsSync(file);
 }
 
-io.sockets.on('connection', function (socket, pseudo) {
-	//console.log('Openning for ' + pseudo);
+io.sockets.on('connection', function (socket) {
+	console.log('Connection d\'un utilisateur');
+	
+	socket.on('disconnect', function(){
+        console.log('Deconnection de ' + socket.pseudo);
+		//envoie de ecit fin au cas ou le client était en train d'ecrire
+		clientEcritFin();
+		
+		var ancienPseudos = [];
+		var ancienUrls = [];
+		var ancienSocketId = [];
+		var dat = moment();
+		for(var i=0;i<pseudos.length;i++){
+			if(pseudos[i]!=socket.pseudo){
+				ancienPseudos[ancienPseudos.length]=pseudos[i];
+				ancienUrls[ancienUrls.length]=urls[i];
+				ancienSocketId[ancienSocketId.length]=socketId[i];
+			}
+		}
+		pseudos = ancienPseudos;
+		urls = ancienUrls;
+		socketId = ancienSocketId;
+		
+		//socket.get('url', function (error, url) {
+		socket.broadcast.emit('clientparti', socket.pseudo,moment(dat).format("HH:mm:ss"));
+    });
 	
 	socket.on('uploaded',function(data, destinataire){
 		console.log(socket.pseudo+" envoi "+data+" a "+destinataire);
 		ajouteEtEnvoiMessage(data, destinataire, "fichier");
 	});
-	
-	
 	
 	socket.on('download',function(fichier){
 		console.log(socket.pseudo+" telecharge "+fichier);
@@ -171,32 +194,54 @@ io.sockets.on('connection', function (socket, pseudo) {
 		socket.emit('download', fileExist(fichier), fichier);
 	});
 	
-	socket.on('clients',function(){
+	/** se fait desormais dans nouveau_client **/
+	/*socket.on('clients',function(){
 		//envoi des utilisateurs déja présent
 		for(var i=0;i<pseudos.length;i++){
-			socket.emit('clients', pseudos[i],urls[i]);
+			console.log(pseudos[i] + " - " + socket.pseudo);
+			if(pseudos[i]==socket.pseudo){
+				socket.emit('clients', pseudos[i],urls[i]);
+			}
 		}
-	});
+	});*/
 
     // Dès qu'on nous donne un pseudo, on le stocke en variable de session et on informe les autres personnes
     socket.on('nouveau_client', function(pseudo,url) {
-		console.log(pseudo + " arrive");
+		console.log('Identification de ' + pseudo);
 		pseudo = ent.encode(pseudo);
+		
+		socket.pseudo = pseudo;//socket.set('pseudo', pseudo);
+		socket.url = url;//socket.set('url', url);	
 		var ok = true;
+		var dat = moment();
+		
+		//envoie de lui même a l'utilisateur
+		socket.emit('nouveau_client', pseudo, url, moment(dat).format("HH:mm:ss"));
+		
+		//envoi des utilisateurs déja présent a l'utilisateur qui se connecte
 		for(var i=0;i<pseudos.length;i++){
+			console.log(pseudos[i] + " - " + socket.pseudo);
+			socket.emit('nouveau_client', pseudos[i],urls[i],moment(dat).format("HH:mm:ss"));
 			if(pseudos[i]==pseudo)ok=false;
 		}
-		var dat = moment();
+		
 		if(ok){
 			//pseudo.url = url;
+			/** brodcast changé par envoi a chque client co (affine alors les envoi en cas de redémmarage de serveur quand plusieurs client deja co) **/
+			//socket.broadcast.emit('nouveau_client', pseudo,url,moment(dat).format("HH:mm:ss 2"));
+			for(var i=0;i<pseudos.length;i++){
+				//io.sockets.connected permet d'envoyer seulement a la personne voulu
+				if(io.sockets.connected[socketId[i]]!="undefined"){
+					io.sockets.connected[socketId[i]].emit('nouveau_client', pseudo,url,moment(dat).format("HH:mm:ss"));
+				}
+			}
 			pseudos.push(pseudo);
 			pseudosWriting.push(false);
 			urls.push(url);
 			socketId.push(socket.id);
-			socket.broadcast.emit('nouveau_client', pseudo,url,moment(dat).format("HH:mm:ss"));
+			
 		}
-		socket.pseudo = pseudo;//socket.set('pseudo', pseudo);
-		socket.url = url;//socket.set('url', url);	
+		
 		//fonction transmission histo receuili
 		var processResult = function(row) {
 			//console.log(row);
@@ -207,7 +252,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 					socket.emit('message', {pseudo: row[key].pseudo, destinataire: row[key].destinataire, message: row[key].text, type: row[key].type , date: moment(row[key].date).format(msgDateFormat)/*new Date(row[key].date).toLocaleTimeString()*/, debut: false, divers: barrerSiTypeFichierEtFileExist(row[key].type, row[key].text)});
 				}
 			}
-			socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
+			//socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 		}
 		//recherche dans la BDD
 		if(bdd == 'mysql'){
@@ -224,7 +269,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		if(bdd == 'pgsql'){
 			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 			  if (err) throw err;
-			  console.log('Connected to postgres! Getting schemas...');
+			  //console.log('Connected to postgres! Getting schemas...');
 
 			  client
 				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg)
@@ -238,7 +283,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 					//change row because message is call text, etc ...
 				})
 				.on('end', function(){
-					socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
+					//socket.emit('nouveau_client', pseudo, null, moment(dat).format("HH:mm:ss"));
 				});
 				done();
 			});
@@ -287,7 +332,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 		if(bdd == 'pgsql'){
 			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 			  if (err) throw err;
-			  console.log('Connected to postgres! Getting schemas...');
+			  //console.log('Connected to postgres! Getting schemas...');
 
 			  client
 				.query("SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+" OFFSET "+(offset*nbMsg))
@@ -335,27 +380,31 @@ io.sockets.on('connection', function (socket, pseudo) {
 	
 	socket.on('client_ecrit_fin', function(){
 		//socket.get('pseudo', function (error, pseudo) {
-			var ok = false;
-			for(var i=0;i<pseudos.length;i++){
-				if(pseudos[i]==socket.pseudo){
-					if(pseudosWriting[i]){
-						pseudosWriting[i] = false;
-						ok = true;
-					}
-				}
-			}
-			if(ok){
-				var pseudosWritingTmp = [];
-				for(var i=0;i<pseudos.length;i++){
-					if(pseudosWriting[i]){
-						pseudosWritingTmp.push(pseudos[i]);
-					}
-				}
-				socket.broadcast.emit('client_ecrit', pseudosWritingTmp);
-				//socket.emit('client_ecrit', pseudosWritingTmp);
-			}
+		clientEcritFin();
 		//});
 	});
+	
+	function clientEcritFin(){
+		var ok = false;
+		for(var i=0;i<pseudos.length;i++){
+			if(pseudos[i]==socket.pseudo){
+				if(pseudosWriting[i]){
+					pseudosWriting[i] = false;
+					ok = true;
+				}
+			}
+		}
+		if(ok){
+			var pseudosWritingTmp = [];
+			for(var i=0;i<pseudos.length;i++){
+				if(pseudosWriting[i]){
+					pseudosWritingTmp.push(pseudos[i]);
+				}
+			}
+			socket.broadcast.emit('client_ecrit', pseudosWritingTmp);
+			//socket.emit('client_ecrit', pseudosWritingTmp);
+		}
+	}
 
     // Dès qu'on reçoit un message, on récupère le pseudo de son auteur et on le transmet aux autres personnes
     socket.on('message', function (message, destinataire) {
@@ -406,6 +455,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			if(message == '/wizz'){
 				//socket.get('pseudo', function (error, pseudo) {
 				pseudo = socket.pseudo;
+				console.log(pseudo + ' envoie un wizz à ' + destinataire);
 					addRatingEntry(pseudo);
 					if(evalRating(pseudo)){
 						//fait trembler lecran !		
@@ -435,6 +485,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			}
 		}else{
 			//socket.get('pseudo', function (error, pseudo) {
+			console.log(socket.pseudo + ' ecrit à ' + destinataire);
 			ajouteEtEnvoiMessage(message, destinataire, "");
 			//});
 		}
@@ -490,27 +541,12 @@ io.sockets.on('connection', function (socket, pseudo) {
 		}
 	}
 	
-	//quand un client deco
-	socket.on('clientparti',function(){
-		console.log(socket.pseudo + " part");
+	/** plus utile car gérer dans on.disconnect **/
+	//quand un client deco 
+	//socket.on('clientparti',function(){
+		//console.log(socket.pseudo + " part");
 		//socket.get('pseudo', function (error, pseudo) {
-			var ancienPseudos = [];
-			var ancienUrls = [];
-			var ancienSocketId = [];
-			var dat = moment();
-			for(var i=0;i<pseudos.length;i++){
-				if(pseudos[i]!=socket.pseudo){
-					ancienPseudos[ancienPseudos.length]=pseudos[i];
-					ancienUrls[ancienUrls.length]=urls[i];
-					ancienSocketId[ancienSocketId.length]=socketId[i];
-				}
-			}
-			pseudos = ancienPseudos;
-			urls = ancienUrls;
-			socketId = ancienSocketId;
 			
-			//socket.get('url', function (error, url) {
-				socket.broadcast.emit('clientparti', socket.pseudo,moment(dat).format("HH:mm:ss"));
 			//});
 			//ajout dans la BDD
 			/*var message = pseudo + ' a quitté le Chat !';
@@ -518,7 +554,7 @@ io.sockets.on('connection', function (socket, pseudo) {
 			var sqlInsert = "insert into historiquechat (pseudo,text,date) values('" + '' + "','" + message + "','"+dat+"') ";
 			db.executeInsertQuery(sqlInsert);*/
 		//});	
-	});
+	//});
 	
 	//for mini draw
 	// Start listening for mouse move events

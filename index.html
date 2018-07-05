@@ -271,7 +271,37 @@
 			// Connexion à socket.io
 			var ip = 'vickychat.herokuapp.com';
 			//var ip = '192.168.1.74:5000';
-            var socket = io.connect(ip);
+            var socket = io.connect(ip, {
+				reconnection: true,
+				reconnectionDelay: 1000,
+				reconnectionDelayMax : 5000,
+				reconnectionAttempts: Infinity
+			} );
+			
+			socket.on( 'connect', function () {
+				console.log( 'connected to server' );
+				//on reset la page car le client va tout recevoir a nouveau !
+				$('#zone_chat').text('');
+				$('#zone_util').text('');
+				$('#combo').text('');
+				$('#combo').append('<option value="Tous">Tous</option>');
+				//on l'envoie au serveur et on l'affiche dans le titre
+				socket.emit('nouveau_client', pseudo,url);
+				document.title = pseudo + ' - ' + document.title;
+				$('#pseudo').text(pseudo);
+				$('#avatar').attr('src',url);
+				/** plus utile car se fait desormais en auto dans nouveau_client **/
+				//socket.emit('clients');
+				
+			} );
+			
+			socket.on( 'disconnect', function () {
+				console.log( 'disconnected from server' );
+				/** plus utile : a gérer directement dans on.disconnect du serveur **/
+				//socket.emit('client_ecrit_fin');
+				//socket.emit('clientparti');
+				//window.setTimeout( 'app.connect()', 5000 );
+			} );
 			
 			function keyupORchange() {
 				var message = $('#message').val();
@@ -311,13 +341,6 @@
 						$('#zone_client_ecrit').append(pseudos[i]+"... ");
 				}
             });
-			
-			//on l'envoie au serveur et on l'affiche dans le titre
-            socket.emit('nouveau_client', pseudo,url);
-            document.title = pseudo + ' - ' + document.title;
-			$('#pseudo').text(pseudo);
-			socket.emit('clients');
-			$('#avatar').attr('src',url);
 
 			//fonction pour informer par clignottement du titre
 			var PageTitleNotification = {
@@ -384,9 +407,7 @@
             // Quand un nouveau client se connecte, on affiche l'information
             socket.on('nouveau_client', function(pseudo,url, date) {
                 $('#zone_chat').prepend('<div class="info">' + date + " : " + pseudo + ' a rejoint le Chat !</div>');
-				if(url != null){
-					appendClient(pseudo, url);
-				}
+				appendClient(pseudo, url);
             });
 			
 			function clicClient(pseudo) {
@@ -401,10 +422,11 @@
 				$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '">' + pseudo + '</option>');
 			}
 								
+			/** plus utilisé : les clients déja la sont désomrais aussi recu par nouveau_client **/
 			//on recoit les client deja la
-			socket.on('clients', function(pseudo,url) {
+			/*socket.on('clients', function(pseudo,url) {
 				appendClient(pseudo, url);
-            });
+            });*/
 			
 			socket.on('clientparti', function(pseudo, date) {
 					$('#zone_chat').prepend('<div class="info">' + date + " : " + pseudo + ' a quitté le Chat !</div>');	
@@ -427,7 +449,8 @@
                 return false; // Permet de bloquer l'envoi "classique" du formulaire
             });
 			
-			$(window).on('beforeunload',function () {
+			/** Plus utilisé car gérer via deconnection du socket **/
+			/*$(window).on('beforeunload',function () {
 				if(block_beforeunload){
 					block_beforeunload = false;
 					return;
@@ -435,7 +458,7 @@
 				socket.emit('client_ecrit_fin');
 				socket.emit('clientparti');
 				//return "Bye now!";
-			});
+			});*/
 			
 			
 			
@@ -514,11 +537,11 @@
 			}
 			
 			//variable pour empecher le navigateur de croire que le client part quand il DL un fichier
-			var block_beforeunload = false;
+			//var block_beforeunload = false;
 			
 			socket.on('download', function(fileExist, fichier){
 				if(fileExist){
-					block_beforeunload = true;
+					//block_beforeunload = true;
 					window.location.href = "/download/"+fichier;
 				}else{
 					alert("Le fichier n'existe plus sur le serveur.");
