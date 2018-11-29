@@ -1,13 +1,59 @@
 /*
+{
+  "name": "app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "ent": "~0.1.0",
+    "express": "~3.3.4",
+    "formidable": "^1.2.1",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.21",
+    "mysql": "^2.15.0",
+    "pg": "4.4.3",
+    "socket.io": "~1.2.1"
+  },
+  "engines": {
+    "node": "5.0.0"
+  },
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
+  "author": "Clad07",
+  "description": "VickyChat",
+  "license": "MIT"
+}
 *//*
+{
+  "name": "app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "electron-prompt": "^1.2.0",
+    "ent": "~0.1.0",
+    "express": "~3.3.4",
+    "formidable": "^1.2.1",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.21",
+    "mysql": "^2.15.0",
+    "pg": "4.4.3",
+    "socket.io": "~1.2.1"
+  },
+  "engines": {
+    "node": "5.0.0"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
+  "author": "Clad07",
+  "description": "VickyChat",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^3.0.10"
+  }
+}
 */
 const electron = require('electron')
 // Module to control appEleclication life.

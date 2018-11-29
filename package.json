@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "electron-prompt": "^1.2.0",
     "ent": "~0.1.0",
     "express": "~3.3.4",
     "formidable": "^1.2.1",
@@ -22,8 +21,5 @@
   },
   "author": "Clad07",
   "description": "VickyChat",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^3.0.10"
-  }
+  "license": "MIT"
 }
