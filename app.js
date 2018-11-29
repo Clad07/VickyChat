@@ -1,6 +1,8 @@
 var app = require('express')(),
     server = require('http').createServer(app),
+    //server = app.listen(5000),
     io = require('socket.io')(server),
+    //io = require('socket.io').listen(server),
     ent = require('ent'), // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
     fs = require('fs'),
 	db = require('./db.js'),
@@ -355,6 +357,8 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('client_ecrit', function(){
+		//var pseudo = socket.pseudo;
+		//console.log(pseudo + ' ecrit');
 		//socket.get('pseudo', function (error, pseudo) {
 			var ok = false;
 			for(var i=0;i<pseudos.length;i++){
@@ -432,7 +436,19 @@ io.sockets.on('connection', function (socket) {
 			}
 			if(message == '/help'){
 				//envoi de la liste des emotes			
-				message = "Liste des commandes : \n • /emote : liste les emotes disponibles.\n • /harlem : fait danser le site.\n • /wizz : fait trembler le site pour tous.\n • /fluid : bascule l'affichage entre Fluide et Centré \n • /clear : efface les dessins \n • /reset : pour nouveau pseudo / image et annule les dessins et le thème \n • /... : ...";
+				message = "\n ► Liste des commandes :\n\n"
+				message+= " • /emote  -> liste les emotes disponibles.\n"
+				message+= " • /harlem -> fait danser le site.\n"
+				message+= " • /wizz   -> fait trembler le site pour tous.\n"
+				message+= " • /fluid  -> bascule l'affichage entre Fluide et Centré.\n"
+				message+= " • /clear  -> efface les dessins.\n"
+				message+= " • /reset  -> pour nouveau pseudo / image et annule les dessins et le thème.\n"
+				message+= "\n ► Liste des astuces à insérer en tout début :\n\n"
+				message+= " • :mono:  -> pour écrire le message en monospace.\n"
+				message+= " • :mini:  -> pour écrire le message en tout petit.\n"
+				message+= "\n ► Liste des astuces à insérer n'importe où :\n\n"
+				message+= " • :emote: -> voir commande /emote.\n"
+				//message+= "• /... : ...";
 				message = ent.encode(message);
 				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 			}

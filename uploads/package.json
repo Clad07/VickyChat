@@ -16,9 +16,9 @@
   "engines": {
     "node": "5.0.0"
   },
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "electron ."
   },
   "author": "Clad07",
   "description": "VickyChat",

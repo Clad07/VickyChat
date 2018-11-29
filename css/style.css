@@ -1,6 +1,9 @@
 body{
 	margin: 0px;
-	background: white url(/image/background.png) repeat;
+	background: white url('../image/background.png') repeat;
+}
+.hide{
+	display: none;
 }
 #canv{
 	position: absolute;
@@ -19,7 +22,7 @@ body{
 	position:absolute;
 	width:15px;
 	height:22px;
-	background:url('/emote/Thumbs-Up.png') no-repeat -4px 0;
+	background:url('../emote/Thumbs-Up.png') no-repeat -4px 0;
 }
 #all{
 	font-family: Roboto;
@@ -194,7 +197,12 @@ body{
 	text-align: justify;
 	width: fit-content;
 }
-
+#zone_chat .mono{
+	font-family: 'Roboto Mono', monospace;
+}
+#zone_chat .mini{
+	font-size: 10px;
+}
 #zone_chat .fichier{
 	font-style: bold;
 	font-size: 20px;
