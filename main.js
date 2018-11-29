@@ -125,4 +125,4 @@ appElec.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 
-var myappElec = require('./app.js');
+//var myappElec = require('./app.js');

@@ -195,7 +195,7 @@ body{
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	text-align: justify;
-	width: fit-content;
+	max-width: fit-content;
 }
 #zone_chat .mono{
 	font-family: 'Roboto Mono', monospace;
