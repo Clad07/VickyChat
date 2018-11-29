@@ -447,6 +447,7 @@ io.sockets.on('connection', function (socket) {
 				message+= " • :mono:    -> pour écrire le message en monospace.\n"
 				message+= " • :mini:    -> pour écrire le message en tout petit.\n"
 				message+= " • :noemote: -> pour écrire le message sans emoticon.\n"
+				message+= " • :ascii:   -> regroupe :mono: ; :mini: et :noemote:.\n"
 				message+= "\n ► Liste des astuces à insérer n'importe où :\n\n"
 				message+= " • :emote:   -> voir commande /emote.\n"
 				//message+= "• /... : ...";
