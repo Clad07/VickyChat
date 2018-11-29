@@ -26,6 +26,7 @@ body{
 }
 #all{
 	font-family: Roboto;
+	font-size: 15px;
 }
 #gauche {
 
@@ -196,12 +197,20 @@ body{
 	word-wrap: break-word;
 	text-align: justify;
 	max-width: fit-content;
+	overflow: hidden;
 }
 #zone_chat .mono{
 	font-family: 'Roboto Mono', monospace;
 }
 #zone_chat .mini{
 	font-size: 10px;
+}
+#zone_chat .micro{
+	font-size: 5px;
+}
+#zone_chat .maxi{
+	font-style: bold;
+	font-size: 25px;
 }
 #zone_chat .fichier{
 	font-style: bold;

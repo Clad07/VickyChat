@@ -431,11 +431,12 @@ io.sockets.on('connection', function (socket) {
 			if(message == '/emote'){
 				//envoi de la liste des emotes			
 				message = "Survoler un emote pour connaitre son code.\nListe des emotes : \n:) <3 ;) :s :d :( ^^ :o :p :mlm: :cafe: :poop:";
+				message+= "\nLes trois derniers existe aussi en gros format en écrivant les lettres en majuscules.";
 				message = ent.encode(message);
 				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 			}
 			if(message == '/help'){
-				//envoi de la liste des emotes			
+				//envoi de la liste des commandes			
 				message = "\n ► Liste des commandes :\n\n"
 				message+= " • /emote    -> liste les emotes disponibles.\n"
 				message+= " • /harlem   -> fait danser le site.\n"
@@ -443,13 +444,15 @@ io.sockets.on('connection', function (socket) {
 				message+= " • /fluid    -> bascule l'affichage entre Fluide et Centré.\n"
 				message+= " • /clear    -> efface les dessins.\n"
 				message+= " • /reset    -> pour nouveau pseudo / image et annule les dessins et le thème.\n"
-				message+= "\n ► Liste des astuces à insérer en tout début :\n\n"
-				message+= " • :mono:    -> pour écrire le message en monospace.\n"
-				message+= " • :mini:    -> pour écrire le message en tout petit.\n"
-				message+= " • :noemote: -> pour écrire le message sans emoticon.\n"
+				message+= "\n ► Liste des astuces à insérer dans le message :\n\n"
+				message+= " • :mono:    -> pour écrire en monospace.\n"
+				message+= " • :mini:    -> pour écrire en petit.\n"
+				message+= " • :micro:   -> pour écrire en très petit.\n"
+				message+= " • :maxi:    -> pour écrire en gros.\n"
+				message+= " • :noemote: -> pour écrire sans emoticon.\n"
 				message+= " • :ascii:   -> regroupe :mono: ; :mini: et :noemote:.\n"
-				message+= "\n ► Liste des astuces à insérer n'importe où :\n\n"
-				message+= " • :emote:   -> voir commande /emote.\n"
+
+				//message+= " • emoticons -> voir commande /emote.\n"
 				//message+= "• /... : ...";
 				message = ent.encode(message);
 				socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});

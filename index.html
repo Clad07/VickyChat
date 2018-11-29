@@ -809,23 +809,33 @@
 	function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
 		var classAstuces = "";
 		var showEmote = true;
-		if(message.startsWith('&colon;ascii&colon;')){
+		if(message.includes('&colon;ascii&colon;')){
 			message = message.replace('&colon;ascii&colon;&NewLine;','');
 			message = message.replace('&colon;ascii&colon;','');
-			classAstuces += "mono mini";
+			classAstuces += " mono mini";
 			showEmote = false;
 		}
-		if(message.startsWith('&colon;mono&colon;')){
+		if(message.includes('&colon;mono&colon;')){
 			message = message.replace('&colon;mono&colon;&NewLine;','');
 			message = message.replace('&colon;mono&colon;','');
-			classAstuces += "mono";
+			classAstuces += " mono";
 		}
-		if(message.startsWith('&colon;mini&colon;')){
+		if(message.includes('&colon;mini&colon;')){
 			message = message.replace('&colon;mini&colon;&NewLine;','');
 			message = message.replace('&colon;mini&colon;','');
 			classAstuces += " mini";
 		}
-		if(message.startsWith('&colon;noemote&colon;')){
+		if(message.includes('&colon;micro&colon;')){
+			message = message.replace('&colon;micro&colon;&NewLine;','');
+			message = message.replace('&colon;micro&colon;','');
+			classAstuces += " micro";
+		}
+		if(message.includes('&colon;maxi&colon;')){
+			message = message.replace('&colon;maxi&colon;&NewLine;','');
+			message = message.replace('&colon;maxi&colon;','');
+			classAstuces += " maxi";
+		}
+		if(message.includes('&colon;noemote&colon;')){
 			message = message.replace('&colon;noemote&colon;&NewLine;','');
 			message = message.replace('&colon;noemote&colon;','');
 			showEmote = false;
