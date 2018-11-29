@@ -4,17 +4,17 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "ent": "~0.1.0",
-    "express": "~3.3.4",
+    "ent": "^0.1.0",
+    "express": "^3.3.4",
     "formidable": "^1.2.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
     "mysql": "^2.15.0",
-    "pg": "4.4.3",
-    "socket.io": "~1.2.1"
+    "pg": "^4.4.3",
+    "socket.io": "^1.2.1"
   },
   "engines": {
-    "node": "5.0.0"
+    "node": "^5.0.0"
   },
   "main": "app.js",
   "scripts": {
@@ -31,17 +31,17 @@
   "private": true,
   "dependencies": {
     "electron-prompt": "^1.2.0",
-    "ent": "~0.1.0",
-    "express": "~3.3.4",
+    "ent": "^0.1.0",
+    "express": "^3.3.4",
     "formidable": "^1.2.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
     "mysql": "^2.15.0",
-    "pg": "4.4.3",
-    "socket.io": "~1.2.1"
+    "pg": "^4.4.3",
+    "socket.io": "^1.2.1"
   },
   "engines": {
-    "node": "5.0.0"
+    "node": "^5.0.0"
   },
   "main": "main.js",
   "scripts": {
@@ -125,4 +125,4 @@ appElec.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 
-//var myappElec = require('./app.js');
+var myappElec = require('./app.js');

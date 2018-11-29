@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "electron-prompt": "^1.2.0",
     "ent": "^0.1.0",
     "express": "^3.3.4",
     "formidable": "^1.2.1",
@@ -15,11 +16,14 @@
   "engines": {
     "node": "^5.0.0"
   },
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "electron ."
   },
   "author": "Clad07",
   "description": "VickyChat",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^3.0.10"
+  }
 }
