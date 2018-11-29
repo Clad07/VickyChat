@@ -201,6 +201,7 @@ body{
 }
 #zone_chat .mono{
 	font-family: 'Roboto Mono', monospace;
+	white-space: pre;
 }
 #zone_chat .mini{
 	font-size: 10px;
