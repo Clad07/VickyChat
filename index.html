@@ -199,7 +199,7 @@
 	//const io = require('socket.io-client');
 	
 	// Connexion à socket.io
-	var ip = 'vickychat.herokuapp.com';
+	var ip = 'https://vickychat.herokuapp.com';
 	//var ip = 'http://192.168.1.74:5000';
 	var socket;
 
@@ -807,21 +807,40 @@
 	
 	// Ajoute un message dans la page
 	function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
-		message = message.replace(/&colon;mlm&colon;/g, '<img src="emote/fuck.png" title=":mlm:"/>');
-		message = message.replace(/&colon;MLM&colon;/g, '<img src="emote/fuck.gif" title=":MLM:"/>');
-		message = message.replace(/&colon;cafe&colon;/g, '<img src="emote/cafe.png" title=":cafe:"/>');
-		message = message.replace(/&colon;CAFE&colon;/g, '<img src="emote/cafeBig.png" title=":CAFE:"/>');
-		message = message.replace(/&colon;poop&colon;/g, '<img src="emote/poop.png" title=":poop:"/>');
-		message = message.replace(/&colon;POOP&colon;/g, '<img src="emote/poopBig.png" title=":POOP:"/>');
-		message = message.replace(/&colon;&rpar;/gi, '<img src="emote/Smile.png" title=":)"/>');
-		message = message.replace(/&lt;3/gi, '<img src="emote/Heart.png" title="<3"/>');
-		message = message.replace(/&semi;&rpar;/gi, '<img src="emote/Wink.png" title=";)"/>');
-		message = message.replace(/&colon;s/gi, '<img src="emote/Confused.png" title=":s"/>');
-		message = message.replace(/&colon;d|xd/gi, '<img src="emote/Laughing.png" title=":d"/>');
-		message = message.replace(/&colon;&lpar;/gi, '<img src="emote/Frown.png" title=":("/>');
-		message = message.replace(/&Hat;&Hat;/gi, '<img src="emote/Grin.png" title="^^"/>');
-		message = message.replace(/&colon;o/gi, '<img src="emote/Gasp.png" title=":o"/>');
-		message = message.replace(/&colon;p/gi, '<img src="emote/Yuck.png" title=":p"/>');
+		var classAstuces = "";
+		var showEmote = true;
+		if(message.startsWith('&colon;mono&colon;')){
+			message = message.replace('&colon;mono&colon;&NewLine;','');
+			message = message.replace('&colon;mono&colon;','');
+			classAstuces += "mono";
+		}
+		if(message.startsWith('&colon;mini&colon;')){
+			message = message.replace('&colon;mini&colon;&NewLine;','');
+			message = message.replace('&colon;mini&colon;','');
+			classAstuces += " mini";
+		}
+		if(message.startsWith('&colon;noemote&colon;')){
+			message = message.replace('&colon;noemote&colon;&NewLine;','');
+			message = message.replace('&colon;noemote&colon;','');
+			showEmote = false;
+		}
+		if(showEmote){
+			message = message.replace(/&colon;mlm&colon;/g, '<img src="emote/fuck.png" title=":mlm:"/>');
+			message = message.replace(/&colon;MLM&colon;/g, '<img src="emote/fuck.gif" title=":MLM:"/>');
+			message = message.replace(/&colon;cafe&colon;/g, '<img src="emote/cafe.png" title=":cafe:"/>');
+			message = message.replace(/&colon;CAFE&colon;/g, '<img src="emote/cafeBig.png" title=":CAFE:"/>');
+			message = message.replace(/&colon;poop&colon;/g, '<img src="emote/poop.png" title=":poop:"/>');
+			message = message.replace(/&colon;POOP&colon;/g, '<img src="emote/poopBig.png" title=":POOP:"/>');
+			message = message.replace(/&colon;&rpar;/gi, '<img src="emote/Smile.png" title=":)"/>');
+			message = message.replace(/&lt;3/gi, '<img src="emote/Heart.png" title="<3"/>');
+			message = message.replace(/&semi;&rpar;/gi, '<img src="emote/Wink.png" title=";)"/>');
+			message = message.replace(/&colon;s/gi, '<img src="emote/Confused.png" title=":s"/>');
+			message = message.replace(/&colon;d|xd/gi, '<img src="emote/Laughing.png" title=":d"/>');
+			message = message.replace(/&colon;&lpar;/gi, '<img src="emote/Frown.png" title=":("/>');
+			message = message.replace(/&Hat;&Hat;/gi, '<img src="emote/Grin.png" title="^^"/>');
+			message = message.replace(/&colon;o/gi, '<img src="emote/Gasp.png" title=":o"/>');
+			message = message.replace(/&colon;p/gi, '<img src="emote/Yuck.png" title=":p"/>');
+		}
 		if(type == "/"){
 			if(debut){
 				$('#zone_chat').prepend('<div class="info mono mini">'+ date + " : " + message + '</div>');
@@ -850,17 +869,6 @@
 					var url = element;
 					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')"><i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 				});
-			}
-			var classAstuces = "";
-			if(message.startsWith('&colon;mono&colon;')){
-				message = message.replace('&colon;mono&colon;&NewLine;','');
-				message = message.replace('&colon;mono&colon;','');
-				classAstuces += "mono";
-			}
-			if(message.startsWith('&colon;mini&colon;')){
-				message = message.replace('&colon;mini&colon;&NewLine;','');
-				message = message.replace('&colon;mini&colon;','');
-				classAstuces += " mini";
 			}
 			var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message '+classAstuces+'">' + message + '</div></div>';
 			if(debut){
