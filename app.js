@@ -26,30 +26,76 @@ var nbMsg = 10;
 var rating, limit, interval;
 rating = []; // rating: [*{'timestamp', 'pseudo'}]
 limit = 10; // limit: maximum number of bytes/characters.
-interval = 60000; // interval: interval in milliseconds.
-function addRatingEntry (pseudo) {
+interval = 30000; // interval: interval in milliseconds.
+function addRatingEntry (pseudo, severite) {
 	// Returns entry object.
-	return rating[(rating.push({
-		'timestamp': Date.now(),
-		'pseudo': pseudo
-	}) - 1)];
+	//return rating[(
+	var nbBoucle = 1;
+	var dateRate = moment();
+	console.log("\n"+moment(dateRate).format(msgDateFormat));
+	console.log("rate "+rating.length);
+	switch(severite){
+			case 2:
+				for (i = rating.length - 1; i >= 0; i -= 1) {
+					if(pseudo == rating[i].pseudo){
+						dateRate = rating[i].timestamp;
+						break;
+					}
+				}
+				dateRate = moment(dateRate).add(nbRating(pseudo, false), 'seconds');
+				//nbBoucle = limit;
+			case 1:
+				nbBoucle++;
+			case 0:
+				
+			default:
+			
+	}
+	console.log(moment(dateRate).format(msgDateFormat)+"\n");
+	for(var i=0;i<nbBoucle;i++){
+		rating.push({
+			'timestamp': dateRate,
+			'pseudo': pseudo
+		});
+	}
+	//- 1)];
 }
-function evalRating (pseudo) {
+function nbRating (pseudo, majRating) {
 	var i, newRating, totalSize;
 	newRating = [];
-	for (i = rating.length - 1; i >= 0; i -= 1) {
-		if ((Date.now() - rating[i].timestamp) < interval)
-			newRating.push(rating[i]);
+	if(majRating){
+		// for (i = rating.length - 1; i >= 0; i -= 1) {
+		for (i = 0; i <= rating.length - 1; i++) {
+			if ((moment() - rating[i].timestamp) < interval || moment() < rating[i].timestamp)
+				newRating.push(rating[i]);
+		}
+		rating = newRating;
+		console.log(rating);
 	}
-	rating = newRating;
 	total = 0;
-	for (i = newRating.length - 1; i >= 0; i -= 1) {
-		if(pseudo == newRating[i].pseudo)
+	for (i = rating.length - 1; i >= 0; i -= 1) {
+		if(pseudo == rating[i].pseudo)
 			total++;
 	}
-	return (total > limit ? false : true);
+	return total;
 }
-
+function evalRating (pseudo) {
+	return (nbRating(pseudo, true) > limit ? false : true);
+}
+function dateRatingOk(pseudo){
+	var dateOk = moment();
+	var nbRatePseudo = 0;
+	//var indexPseudoLimit = 0;
+	for (i = rating.length - 1; i >= 0; i -= 1) {
+		if(pseudo == rating[i].pseudo){
+			nbRatePseudo++;
+			dateOk = rating[i].timestamp;
+		}
+		if(nbRatePseudo == limit)
+			break;
+	}
+	return dateOk.diff(moment().add(-30, 'seconds'), 'seconds');
+}
 // Chargement de la page index.html
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
@@ -291,7 +337,7 @@ io.sockets.on('connection', function (socket) {
 			});
 			
 			pg.end();
-			//socket.emit('message', {pseudo: "LOL", message: "URL: "+db_url, date: moment(Date.now()).format(msgDateFormat), debut: true});
+			//socket.emit('message', {pseudo: "LOL", message: "URL: "+db_url, date: moment().format(msgDateFormat), debut: true});
 			/*client.connect();
 
 			client.query("SELECT s.* FROM (SELECT * FROM historiquechat WHERE pseudo <> '' ORDER BY id DESC LIMIT "+nbMsg+") s ORDER BY s.id ASC", (err, res) => {
@@ -477,7 +523,7 @@ io.sockets.on('connection', function (socket) {
 				//socket.get('pseudo', function (error, pseudo) {
 				pseudo = socket.pseudo;
 				console.log(pseudo + ' envoie un wizz à ' + destinataire);
-					addRatingEntry(pseudo);
+					addRatingEntry(pseudo, 1);
 					if(evalRating(pseudo)){
 						//fait trembler lecran !		
 						message = pseudo+" a envoyé un wizz à " + destinataire + " !";
@@ -499,8 +545,8 @@ io.sockets.on('connection', function (socket) {
 						}
 					}else{
 						//for(var i=0;i<10;i++)
-							addRatingEntry(pseudo);
-						socket.emit('flood');
+							addRatingEntry(pseudo, 2);
+						socket.emit('flood', dateRatingOk(pseudo));
 					}
 				//});			
 			}
@@ -519,7 +565,7 @@ io.sockets.on('connection', function (socket) {
 		var dat = moment();
 		pseudo = socket.pseudo;
 		if(evalRating(pseudo)){
-			addRatingEntry(pseudo);
+			addRatingEntry(pseudo, 0);
 			message = ent.encode(message);
 			
 			socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true, divers: ""});
@@ -557,8 +603,8 @@ io.sockets.on('connection', function (socket) {
 			}
 		}else{
 			//for(var i=0;i<10;i++)
-				addRatingEntry(pseudo);
-			socket.emit('flood');
+				addRatingEntry(pseudo, 2);
+			socket.emit('flood', dateRatingOk(pseudo));
 		}
 	}
 	

@@ -55,6 +55,9 @@
   }
 }
 */
+
+//electron-packager . VickyChat --out dist --overwrite --all
+
 const electron = require('electron')
 // Module to control appEleclication life.
 const appElec = electron.app

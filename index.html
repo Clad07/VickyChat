@@ -480,8 +480,8 @@
 		});
 		
 		// Quand on flood
-		socket.on('flood', function() {
-			alert("Veuillez cessez de flooder !");
+		socket.on('flood', function(delais) {
+			alert("Veuillez cessez de flooder !\n\nVous devez désormais attendre "+delais+" secondes.");
 		});
 		
 		// Quand un nouveau client se connecte, on affiche l'information
