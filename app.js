@@ -130,6 +130,12 @@ app.use(function(req, res, next){
     res.send(404, 'Page introuvable !');
 });
 
+app.get('/uploads/:name', function (req, res) {
+	  var img = fs.readFileSync('./uploads/'+req.params.name);
+	  res.writeHead(200, {'Content-Type': 'image/png' });
+	  res.end(img, 'binary');
+});
+
 //for upload
 app.post('/upload', function(req, res){
 	var dir = './uploads';

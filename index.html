@@ -607,7 +607,8 @@
 					// Draw a line on the canvas. clients[data.id] holds
 					// the previous position of this user's mouse pointer
 
-					drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y, data.color);
+					//drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y, data.color);
+					drawLine(data.x_prec, data.y_prec, data.x, data.y, data.color);
 				}
 
 				// Saving the current client state
@@ -634,11 +635,13 @@
 			var lastEmit = $.now();
 
 			doc.on('mousemove',function(e){
-				if($.now() - lastEmit > 30 && drawing){
+				if($.now() - lastEmit > 5 && drawing){
 					var dest = $('#combo option:selected').val();
 					socket.emit('mousemove',{
 						'x': e.pageX,
 						'y': e.pageY,
+						'x_prec': prev.x,
+						'y_prec': prev.y,
 						'drawing': drawing,
 						'id': id,
 						'color':$(".titre").css("color")
@@ -885,8 +888,17 @@
 				message = "";
 				var i=0;
 				ficList.forEach(function(element) {
-					var url = element;
-					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')"><i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
+					message += '<div class="divFichier backColorTransp" style="display:inline-block;">';
+					if(element.toLowerCase().endsWith('.jpg') || element.toLowerCase().endsWith('&period;jpg') 
+					|| element.toLowerCase().endsWith('.png') || element.toLowerCase().endsWith('&period;png') 
+					|| element.toLowerCase().endsWith('.gif') || element.toLowerCase().endsWith('&period;gif')
+					|| element.toLowerCase().endsWith('.bmp') || element.toLowerCase().endsWith('&period;bmp')
+					|| element.toLowerCase().endsWith('.ico') || element.toLowerCase().endsWith('&period;ico')){
+						message += '<a href="' + ip + '/uploads/' + element + '"><img class="imgFichier imageHover" src="' + ip + '/uploads/' + element + '"></a>';
+					}
+					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')">'
+					message += '<i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
+					message += '</div>';
 				});
 			}
 			var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message '+classAstuces+'">' + message + '</div></div>';
@@ -929,10 +941,46 @@
 	});
 
 	$('#upload-input').on('change', function(){
-
+		
+		console.log("wtf");
 	  var files = $(this).get(0).files;
 
-	  if (files.length > 0){
+	  
+	  handleUpload(files);
+	  
+	});
+/****** drag and drop ******/
+	var isAdvancedUpload = function() {
+		var div = document.createElement('div');
+		return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+	}();
+
+	if (isAdvancedUpload) {
+
+	  var droppedFiles = false;
+
+	  var $form = $('#allDiv');
+	  
+	  $form.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	  })
+	  .on('dragover dragenter', function() {
+		$form.addClass('is-dragover');
+	  })
+	  .on('dragleave dragend drop', function() {
+		$form.removeClass('is-dragover');
+	  })
+	  .on('drop', function(e) {
+		droppedFiles = e.originalEvent.dataTransfer.files;
+		//$form.trigger('submit');
+		handleUpload(droppedFiles);
+	  });
+
+	}
+	
+	function handleUpload(files){
+		if (files.length > 0){
 		// create a FormData object which will be sent as the data payload in the
 		// AJAX request
 		var formData = new FormData();
@@ -986,9 +1034,7 @@
 		});
 
 	  }
-	});
-
-	
+	}
 	
 	function harlem() 
 	{ 
