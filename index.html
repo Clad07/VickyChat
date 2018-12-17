@@ -222,7 +222,7 @@
 		$('link[id="link"]').attr('href','css/style'+styleCss+'.css');
 		var color = "style"+styleCss;
 		createCookie("style",color,356);
-		ctx.strokeStyle = $(".titre").css("color");
+		//ctx.strokeStyle = $(".titre").css("color");
 		/*await sleep(10);
 		for(var i=0; i<100;i++){
 			ctx.strokeStyle = $(".titre").css("color");
@@ -607,7 +607,7 @@
 					// Draw a line on the canvas. clients[data.id] holds
 					// the previous position of this user's mouse pointer
 
-					drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y);
+					drawLine(clients[data.id].x, clients[data.id].y, data.x, data.y, data.color);
 				}
 
 				// Saving the current client state
@@ -640,7 +640,8 @@
 						'x': e.pageX,
 						'y': e.pageY,
 						'drawing': drawing,
-						'id': id
+						'id': id,
+						'color':$(".titre").css("color")
 					},dest);
 					lastEmit = $.now();
 				}
@@ -650,7 +651,7 @@
 
 				if(drawing){
 					
-					drawLine(prev.x, prev.y, e.pageX, e.pageY);
+					drawLine(prev.x, prev.y, e.pageX, e.pageY, $(".titre").css("color"));
 
 					prev.x = e.pageX;
 					prev.y = e.pageY;
@@ -673,14 +674,14 @@
 				}
 
 			},10000);
-			function drawLine(fromx, fromy, tox, toy){
+			function drawLine(fromx, fromy, tox, toy, color){
 				ctx.beginPath();
 				/*ctx.moveTo(fromx-canvas.offset().left, fromy-canvas.offset().top);
 				ctx.lineTo(tox-canvas.offset().left, toy-canvas.offset().top);*/
 				//ctx.moveTo(-canvas.offset().left, -canvas.offset().top);
 				ctx.moveTo(fromx, fromy);
 				ctx.lineTo(tox, toy);
-				ctx.strokeStyle = $(".titre").css("color");
+				ctx.strokeStyle = color;
 				ctx.lineWidth = 1;
 				ctx.stroke();
 			}
@@ -809,36 +810,38 @@
 	function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
 		var classAstuces = "";
 		var showEmote = true;
-		if(message.includes('&colon;ascii&colon;')){
-			message = message.replace('&colon;ascii&colon;&NewLine;','');
-			message = message.replace('&colon;ascii&colon;','');
-			classAstuces += " mono mini";
-			showEmote = false;
-		}
-		if(message.includes('&colon;mono&colon;')){
-			message = message.replace('&colon;mono&colon;&NewLine;','');
-			message = message.replace('&colon;mono&colon;','');
-			classAstuces += " mono";
-		}
-		if(message.includes('&colon;mini&colon;')){
-			message = message.replace('&colon;mini&colon;&NewLine;','');
-			message = message.replace('&colon;mini&colon;','');
-			classAstuces += " mini";
-		}
-		if(message.includes('&colon;micro&colon;')){
-			message = message.replace('&colon;micro&colon;&NewLine;','');
-			message = message.replace('&colon;micro&colon;','');
-			classAstuces += " micro";
-		}
-		if(message.includes('&colon;maxi&colon;')){
-			message = message.replace('&colon;maxi&colon;&NewLine;','');
-			message = message.replace('&colon;maxi&colon;','');
-			classAstuces += " maxi";
-		}
-		if(message.includes('&colon;noemote&colon;')){
-			message = message.replace('&colon;noemote&colon;&NewLine;','');
-			message = message.replace('&colon;noemote&colon;','');
-			showEmote = false;
+		if(type != "/"){
+			if(message.includes('&colon;ascii&colon;')){
+				message = message.replace('&colon;ascii&colon;&NewLine;','');
+				message = message.replace('&colon;ascii&colon;','');
+				classAstuces += " mono mini";
+				showEmote = false;
+			}
+			if(message.includes('&colon;mono&colon;')){
+				message = message.replace('&colon;mono&colon;&NewLine;','');
+				message = message.replace('&colon;mono&colon;','');
+				classAstuces += " mono";
+			}
+			if(message.includes('&colon;mini&colon;')){
+				message = message.replace('&colon;mini&colon;&NewLine;','');
+				message = message.replace('&colon;mini&colon;','');
+				classAstuces += " mini";
+			}
+			if(message.includes('&colon;micro&colon;')){
+				message = message.replace('&colon;micro&colon;&NewLine;','');
+				message = message.replace('&colon;micro&colon;','');
+				classAstuces += " micro";
+			}
+			if(message.includes('&colon;maxi&colon;')){
+				message = message.replace('&colon;maxi&colon;&NewLine;','');
+				message = message.replace('&colon;maxi&colon;','');
+				classAstuces += " maxi";
+			}
+			if(message.includes('&colon;noemote&colon;')){
+				message = message.replace('&colon;noemote&colon;&NewLine;','');
+				message = message.replace('&colon;noemote&colon;','');
+				showEmote = false;
+			}
 		}
 		if(showEmote){
 			message = message.replace(/&colon;mlm&colon;/g, '<img src="emote/fuck.png" title=":mlm:"/>');
