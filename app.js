@@ -192,7 +192,7 @@ function barrerSiTypeFichierEtFileExist(type, message){
 	var divers = "";
 	var decodeMess = ent.decode(message);
 	if(type=="fichier"){
-		var ficList = decodeMess.split('&VerticalLine;');
+		var ficList = decodeMess.split('|');
 		ficList.forEach(function(element) {
 			divers += (divers!=""?"|":"");
 			if(fileExist(element)){
@@ -202,7 +202,7 @@ function barrerSiTypeFichierEtFileExist(type, message){
 			}
 		});
 	}
-	return divers;
+	return ent.encode(divers);
 }
 
 function fileExist(fichier){

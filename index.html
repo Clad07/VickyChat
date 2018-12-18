@@ -889,12 +889,12 @@
 				var i=0;
 				ficList.forEach(function(element) {
 					message += '<div class="divFichier backColorTransp" style="display:inline-block;">';
-					
 					if(divList[i] != "barrer" && (element.toLowerCase().endsWith('.jpg') || element.toLowerCase().endsWith('&period;jpg')
-					|| element.toLowerCase().endsWith('.png') || element.toLowerCase().endsWith('&period;png') 
-					|| element.toLowerCase().endsWith('.gif') || element.toLowerCase().endsWith('&period;gif')
-					|| element.toLowerCase().endsWith('.bmp') || element.toLowerCase().endsWith('&period;bmp')
-					|| element.toLowerCase().endsWith('.ico') || element.toLowerCase().endsWith('&period;ico'))){
+						|| element.toLowerCase().endsWith('.png') || element.toLowerCase().endsWith('&period;png') 
+						|| element.toLowerCase().endsWith('.gif') || element.toLowerCase().endsWith('&period;gif')
+						|| element.toLowerCase().endsWith('.bmp') || element.toLowerCase().endsWith('&period;bmp')
+						|| element.toLowerCase().endsWith('.ico') || element.toLowerCase().endsWith('&period;ico')))
+					{
 						message += '<a href="' + ip + '/uploads/' + element + '"><img class="imgFichier imageHover" src="' + ip + '/uploads/' + element + '"></a>';
 					}
 					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')">'
