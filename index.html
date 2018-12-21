@@ -807,11 +807,19 @@
 		//return "Bye now!";
 	});*/
 	
-	
+	function convert(text)
+    {
+	  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+	  var text1=text.replace(exp, "<a href='$1'>$1</a>");
+	  //console.log(text1);
+	  var exp2 =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
+	  return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+    }
 	
 	// Ajoute un message dans la page
 	function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
 		var classAstuces = "";
+		var classBigPic = "";
 		var showEmote = true;
 		if(type != "/"){
 			if(message.includes('&colon;ascii&colon;')){
@@ -843,6 +851,14 @@
 			if(message.includes('&colon;noemote&colon;')){
 				message = message.replace('&colon;noemote&colon;&NewLine;','');
 				message = message.replace('&colon;noemote&colon;','');
+				showEmote = false;
+			}
+			if(message.includes('&colon;bigpic&colon;')){
+				message = message.replace('&colon;bigpic&colon;&NewLine;','');
+				message = message.replace('&colon;bigpic&colon;','');
+				classBigPic += " bigPic";
+			}
+			if(type == "fichier"){
 				showEmote = false;
 			}
 		}
@@ -881,26 +897,47 @@
 			date = '<span class="date">' + date + '</span>';
 			//console.log(type);
 			if(type == "fichier"){
+				//console.log(message+"\n\n"+divers);
 				//si type fichier, split les noms de fichier et les afficher en hyperlien pour clic download
-				var ficList = message.split('&VerticalLine;');
+				var mess = "";
+				var ficList;
+				if(message.includes('&colon;file&colon;')){
+					var messFic = message.split('&colon;file&colon;');
+					var mess = messFic[0];
+					ficList = messFic[1].split('&VerticalLine;');
+				}else{
+					ficList = message.split('&VerticalLine;');
+				}
 				//de plus, split divers qui contient, pour cuaque fichier, l'info de le barrer ou non (barrer su fichier delete)
 				var divList = divers.split('&VerticalLine;');
 				message = "";
+				if (mess != "") {
+					message += mess + "\n";
+				}
 				var i=0;
 				ficList.forEach(function(element) {
 					message += '<div class="divFichier backColorTransp" style="display:inline-block;">';
+					//console.log(element + " == " + divList[i]);
 					if(divList[i] != "barrer" && (element.toLowerCase().endsWith('.jpg') || element.toLowerCase().endsWith('&period;jpg')
 						|| element.toLowerCase().endsWith('.png') || element.toLowerCase().endsWith('&period;png') 
 						|| element.toLowerCase().endsWith('.gif') || element.toLowerCase().endsWith('&period;gif')
 						|| element.toLowerCase().endsWith('.bmp') || element.toLowerCase().endsWith('&period;bmp')
 						|| element.toLowerCase().endsWith('.ico') || element.toLowerCase().endsWith('&period;ico')))
 					{
-						message += '<a href="' + ip + '/uploads/' + element + '"><img class="imgFichier imageHover" src="' + ip + '/uploads/' + element + '"></a>';
+						message += '<a href="' + ip + '/uploads/' + element + '"><img class="imgFichier imageHover '+classBigPic+'" src="' + ip + '/uploads/' + element + '"></a>';
 					}
 					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')">'
 					message += '<i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 					message += '</div>';
 				});
+			}else{
+				var txt = document.createElement("textarea");
+				txt.innerHTML = message;
+				message = txt.value;
+			
+				console.log(message);
+				message = convert(message);
+				console.log(message);
 			}
 			var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message '+classAstuces+'">' + message + '</div></div>';
 			if(debut){
@@ -1003,7 +1040,10 @@
 		  success: function(data){
 			  console.log('upload successful!\n n:' + data);
 			  var dest = $('#combo option:selected').val();
-			  socket.emit('uploaded', data, dest);
+			  var message = $('#message').val();
+			  $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+			  
+			  socket.emit('uploaded', data, message, dest);
 		  },
 		  xhr: function() {
 			// create an XMLHttpRequest

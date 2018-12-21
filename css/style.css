@@ -236,7 +236,10 @@ body{
 	padding:0px;
 	border-radius: 10px;
 }
-
+#zone_chat .bigPic{
+	height:auto !important;
+	max-width: 100%;
+}
 #zone_chat .barrer{
 	text-decoration:line-through;
 }

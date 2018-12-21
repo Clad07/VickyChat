@@ -189,10 +189,19 @@ app.get('/download/:name', function(req, res){
 });
 
 function barrerSiTypeFichierEtFileExist(type, message){
-	var divers = "";
+	var divers = "";	
 	var decodeMess = ent.decode(message);
 	if(type=="fichier"){
-		var ficList = decodeMess.split('|');
+		var ficList;
+		if(decodeMess.includes(':file:')){
+			var messFic = decodeMess.split(':file:');
+			//var mess = messFic[0];
+			ficList = messFic[1].split('|');
+		}else{
+			ficList = message.split('|');
+		}
+		
+		//var ficList = decodeMess.split('|');
 		ficList.forEach(function(element) {
 			divers += (divers!=""?"|":"");
 			if(fileExist(element)){
@@ -237,7 +246,8 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('clientparti', socket.pseudo,moment(dat).format("HH:mm:ss"));
     });
 	
-	socket.on('uploaded',function(data, destinataire){
+	socket.on('uploaded',function(data, message, destinataire){
+		data = message + ":file:" + data;
 		console.log(socket.pseudo+" envoi "+data+" a "+destinataire);
 		ajouteEtEnvoiMessage(data, destinataire, "fichier");
 	});
@@ -331,7 +341,7 @@ io.sockets.on('connection', function (socket) {
 				.on('row', function(row) {
 					//console.log(row);
 					if(row.pseudo == pseudo || row.destinataire == pseudo || row.destinataire == "Tous"){
-						var divers = barrerSiTypeFichierEtFileExist(row.type, row.text);
+						//var divers = barrerSiTypeFichierEtFileExist(row.type, row.text);
 						socket.emit('message', {pseudo: row.pseudo, destinataire: row.destinataire, message: row.text, type: row.type , date: moment(row.date).format(msgDateFormat), debut: false, divers: barrerSiTypeFichierEtFileExist(row.type, row.text)});
 					}
 					//change row because message is call text, etc ...
@@ -503,6 +513,7 @@ io.sockets.on('connection', function (socket) {
 				message+= " • :maxi:    -> pour écrire en gros.\n"
 				message+= " • :noemote: -> pour écrire sans emoticon.\n"
 				message+= " • :ascii:   -> regroupe :mono: ; :mini: et :noemote:.\n"
+				message+= " • :bigpic:  -> affiche une image uploadée en largeur 100% (Si taille de l'image suffisante ! A mettre dans le message AVANT d'uploader l'image).\n"
 
 				//message+= " • emoticons -> voir commande /emote.\n"
 				//message+= "• /... : ...";
@@ -564,14 +575,31 @@ io.sockets.on('connection', function (socket) {
 		}
     }); 
 	
+	/***** to convert all url inside text param to link ****/
+	/*function convert(text)
+    {
+	  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+	  var text1=text.replace(exp, "<a href='$1'>$1</a>");
+	  console.log(text1);
+	  var exp2 =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
+	  return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
+    }*/
+	
 	function ajouteEtEnvoiMessage(message, destinataire, type){
 		var pseudo;
-		// pas besoins de tester le fichier (si cest un mesage de tyepe fichier) car celui ci vient a linstant detre upload, il serait etrange quil soit deja delete.
+		// pas besoins de tester le fichier (si cest un mesage de type fichier) car celui ci vient a linstant detre upload, il serait etrange quil soit deja delete.
 		var divers = "";
 		var dat = moment();
 		pseudo = socket.pseudo;
 		if(evalRating(pseudo)){
 			addRatingEntry(pseudo, 0);
+			
+			/*if(type != 'fichier'){
+				console.log(message);
+				message = convert(message);
+				console.log(message);
+			}*/
+			
 			message = ent.encode(message);
 			
 			socket.emit('message', {pseudo: pseudo, destinataire: destinataire, message: message, type: type , date: moment(dat).format(msgDateFormat), debut: true, divers: ""});
@@ -609,7 +637,7 @@ io.sockets.on('connection', function (socket) {
 			}
 		}else{
 			//for(var i=0;i<10;i++)
-				addRatingEntry(pseudo, 2);
+			addRatingEntry(pseudo, 2);
 			socket.emit('flood', dateRatingOk(pseudo));
 		}
 	}
