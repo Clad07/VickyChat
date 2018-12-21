@@ -16,6 +16,9 @@
 	
     <body>
 		<div id="allDiv" class="hide">
+			<div id="overlay" onclick="off()">
+				<img id="imageOverlay" class="bigPic" src="">
+			</div>
 			<!-- <iframe id="my_iframe" style="display:none;"></iframe> -->
 			<div id="canv">
 				<canvas id="paper" width="5000px" height="5000px">
@@ -816,6 +819,15 @@
 	  return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
     }
 	
+	function on(img) {
+		$('#imageOverlay').attr('src', img.src);
+		document.getElementById("overlay").style.display = "flex";
+	}
+
+	function off() {
+		document.getElementById("overlay").style.display = "none";
+	}
+	
 	// Ajoute un message dans la page
 	function insereMessage(pseudo, destinataire, message, type, date, debut, divers) {
 		var classAstuces = "";
@@ -924,8 +936,10 @@
 						|| element.toLowerCase().endsWith('.bmp') || element.toLowerCase().endsWith('&period;bmp')
 						|| element.toLowerCase().endsWith('.ico') || element.toLowerCase().endsWith('&period;ico')))
 					{
-						message += '<a href="' + ip + '/uploads/' + element + '"><img class="imgFichier imageHover '+classBigPic+'" src="' + ip + '/uploads/' + element + '"></a>';
-					}
+						var src = ip + '/uploads/' + element;
+						
+						message += '<img onclick="on(this)" class="imgFichier imageHover '+classBigPic+'" src="' + src + '">';
+					}//<a href="' + ip + '/uploads/' + element + '"></a>
 					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')">'
 					message += '<i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 					message += '</div>';
@@ -934,10 +948,7 @@
 				var txt = document.createElement("textarea");
 				txt.innerHTML = message;
 				message = txt.value;
-			
-				console.log(message);
 				message = convert(message);
-				console.log(message);
 			}
 			var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message '+classAstuces+'">' + message + '</div></div>';
 			if(debut){
