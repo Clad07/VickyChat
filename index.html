@@ -898,15 +898,15 @@
 			message = message.replace(/&colon;p/gi, '<img src="emote/Yuck.png" title=":p"/>');
 		}
 		if(type.startsWith("/")){
-			var miniMaxi = "mini";
+			var miniMaxi = "mono mini";
 			if(type == "/wizz") {
-				miniMaxi = "maxi";
+				miniMaxi = "";
 				notifyMe("Wizz",message,"image/navi.png");
 			}
 			if(debut){
-				$('#zone_chat').prepend('<div class="info mono '+miniMaxi+'">'+ date + " : " + message + '</div>');
+				$('#zone_chat').prepend('<div class="info '+miniMaxi+'">'+ date + " : " + message + '</div>');
 			}else{
-				$('#zone_chat').append('<div class="info mono '+miniMaxi+'">'+ date + " : " + message + '</div>');
+				$('#zone_chat').append('<div class="info '+miniMaxi+'">'+ date + " : " + message + '</div>');
 			}
 		}else {
 			pseudo = '<span class="titre emetteur bord">' + pseudo + '</span>';
