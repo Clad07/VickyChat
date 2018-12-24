@@ -813,7 +813,7 @@
 	function convert(text)
     {
 	  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-	  var text1=text.replace(exp, "<a href='$1'>$1</a>");
+	  var text1=text.replace(exp, "<a href='$1' target='_blank'>$1</a>");
 	  //console.log(text1);
 	  var exp2 =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
 	  return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>');
@@ -939,7 +939,7 @@
 						var src = ip + '/uploads/' + element;
 						
 						message += '<img onclick="on(this)" class="imgFichier imageHover '+classBigPic+'" src="' + src + '">';
-					}//<a href="' + ip + '/uploads/' + element + '"></a>
+					}//<a href="' + ip + '/uploads/' + element + '" target="_blank"></a>
 					message += '<span id="span" class="fichier boutonHover ' + divList[i++] + '" onclick="downloadFichier(\'' + element + '\')">'
 					message += '<i class="fas fa-download fichierIcon"></i>' + element + '</span>';//<a href="' + url + '" download></a>
 					message += '</div>';
@@ -1135,9 +1135,11 @@
 			
 			// On teste si ajaxready vaut false, auquel cas on stoppe la fonction
 			if ($(window).data('ajaxready') == false) return;
-
-			if(($(window).scrollTop() + $(window).height()) == $(document).height()
-			|| agentID && ($(window).scrollTop() + $(window).height()) + 150 > $(document).height()) {
+				
+			//alert($(window).scrollTop() + $(window).height() + "||" + $(document).height() + "||||" + (($(window).scrollTop() + $(window).height()) + 150) + "||" + $(document).height());
+			
+			if(($(window).scrollTop() + $(window).height()) + 50 >= $(document).height()
+			|| agentID && ($(window).scrollTop() + $(window).height()) + 150 >= $(document).height()) {
 				// lorsqu'on commence un traitement, on met ajaxready à false
 				$(window).data('ajaxready', false);
 
