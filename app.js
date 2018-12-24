@@ -191,6 +191,7 @@ app.get('/download/:name', function(req, res){
 function barrerSiTypeFichierEtFileExist(type, message){
 	var divers = "";	
 	var decodeMess = ent.decode(message);
+	//console.log(decodeMess);
 	if(type=="fichier"){
 		var ficList;
 		if(decodeMess.includes(':file:')){
@@ -198,7 +199,7 @@ function barrerSiTypeFichierEtFileExist(type, message){
 			//var mess = messFic[0];
 			ficList = messFic[1].split('|');
 		}else{
-			ficList = message.split('|');
+			ficList = decodeMess.split('|');
 		}
 		
 		//var ficList = decodeMess.split('|');

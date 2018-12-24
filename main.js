@@ -45,18 +45,20 @@
   },
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-packager . VickyChat --out dist --overwrite platform=win32 --arch=x64 --icon=image/logo.ico"
   },
   "author": "Clad07",
   "description": "VickyChat",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^3.0.10"
+    "electron": "^3.0.10",
+    "electron-packager": "^12.1.0"
   }
 }
 */
 
-//electron-packager . VickyChat --out dist --overwrite --all
+//electron-packager . VickyChat --out dist --overwrite --all --icon=image/logo.ico
 
 const electron = require('electron')
 // Module to control appEleclication life.
