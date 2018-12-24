@@ -810,6 +810,12 @@
 		//return "Bye now!";
 	});*/
 	
+	function decode(message){
+		var txt = document.createElement("textarea");
+		txt.innerHTML = message;
+		return txt.value;
+	}
+	
 	function convert(text)
     {
 	  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
@@ -833,7 +839,7 @@
 		var classAstuces = "";
 		var classBigPic = "";
 		var showEmote = true;
-		if(type != "/"){
+		if(!type.startsWith("/")){
 			if(message.includes('&colon;ascii&colon;')){
 				message = message.replace('&colon;ascii&colon;&NewLine;','');
 				message = message.replace('&colon;ascii&colon;','');
@@ -891,11 +897,16 @@
 			message = message.replace(/&colon;o/gi, '<img src="emote/Gasp.png" title=":o"/>');
 			message = message.replace(/&colon;p/gi, '<img src="emote/Yuck.png" title=":p"/>');
 		}
-		if(type == "/"){
+		if(type.startsWith("/")){
+			var miniMaxi = "mini";
+			if(type == "/wizz") {
+				miniMaxi = "maxi";
+				notifyMe("Wizz",message,"image/navi.png");
+			}
 			if(debut){
-				$('#zone_chat').prepend('<div class="info mono mini">'+ date + " : " + message + '</div>');
+				$('#zone_chat').prepend('<div class="info mono '+miniMaxi+'">'+ date + " : " + message + '</div>');
 			}else{
-				$('#zone_chat').append('<div class="info mono mini">'+ date + " : " + message + '</div>');
+				$('#zone_chat').append('<div class="info mono '+miniMaxi+'">'+ date + " : " + message + '</div>');
 			}
 		}else {
 			pseudo = '<span class="titre emetteur bord">' + pseudo + '</span>';
@@ -945,9 +956,7 @@
 					message += '</div>';
 				});
 			}else{
-				var txt = document.createElement("textarea");
-				txt.innerHTML = message;
-				message = txt.value;
+				message = decode(message);
 				message = convert(message);
 			}
 			var messageTotal = '<div class="messageTotal backColorTransp"><div class="enteteMessage"><span class="emetVersDest">' + pseudo + vers + destinataire + '</span>' + date + '</div><div class="message '+classAstuces+'">' + message + '</div></div>';
@@ -960,6 +969,41 @@
 		$('#canv').height($('#gauche').outerHeight(true)+50);
 	}
 	
+	/** code for Push Notifications **/
+	function notifyMe(title, body, icon) {
+		body = decode(body);
+		// Voyons si le navigateur supporte les notifications
+		if (!("Notification" in window)) {
+			alert("Ce navigateur ne supporte pas les notifications desktop");
+		}
+
+		// Voyons si l'utilisateur est OK pour recevoir des notifications
+		else if (Notification.permission === "granted") {
+			// Si c'est ok, créons une notification
+			var notification = new Notification(title, { body: body, icon: icon });
+		}
+
+		// Sinon, nous avons besoin de la permission de l'utilisateur
+		// Note : Chrome n'implémente pas la propriété statique permission
+		// Donc, nous devons vérifier s'il n'y a pas 'denied' à la place de 'default'
+		else if (Notification.permission !== 'denied') {
+			Notification.requestPermission(function (permission) {
+
+				// Quelque soit la réponse de l'utilisateur, nous nous assurons de stocker cette information
+				if(!('permission' in Notification)) {
+					Notification.permission = permission;
+				}
+
+				// Si l'utilisateur est OK, on crée une notification
+				if (permission === "granted") {
+					var notification = new Notification(title, { body: body, icon: icon });
+				}
+			});
+		}
+
+		// Comme ça, si l'utlisateur a refusé toute notification, et que vous respectez ce choix,
+		// il n'y a pas besoin de l'ennuyer à nouveau.
+	}
 	
 /****** code for download  *******/	
 	//var $idown;  // Keep it outside of the function, so it's initialized once.

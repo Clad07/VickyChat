@@ -32,8 +32,8 @@ function addRatingEntry (pseudo, severite) {
 	//return rating[(
 	var nbBoucle = 1;
 	var dateRate = moment();
-	console.log("\n"+moment(dateRate).format(msgDateFormat));
-	console.log("rate "+rating.length);
+	//console.log("\n"+moment(dateRate).format(msgDateFormat));
+	//console.log("rate "+rating.length);
 	switch(severite){
 			case 2:
 				for (i = rating.length - 1; i >= 0; i -= 1) {
@@ -51,7 +51,7 @@ function addRatingEntry (pseudo, severite) {
 			default:
 			
 	}
-	console.log(moment(dateRate).format(msgDateFormat)+"\n");
+	//console.log(moment(dateRate).format(msgDateFormat)+"\n");
 	for(var i=0;i<nbBoucle;i++){
 		rating.push({
 			'timestamp': dateRate,
@@ -70,7 +70,7 @@ function nbRating (pseudo, majRating) {
 				newRating.push(rating[i]);
 		}
 		rating = newRating;
-		console.log(rating);
+		//console.log(rating);
 	}
 	total = 0;
 	for (i = rating.length - 1; i >= 0; i -= 1) {
@@ -547,16 +547,16 @@ io.sockets.on('connection', function (socket) {
 						message = pseudo+" a envoyé un wizz à " + destinataire + " !";
 						message = ent.encode(message);
 						socket.emit('wizz');
-						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
+						socket.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/wizz" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 						if(destinataire=="Tous"){
 							socket.broadcast.emit('wizz');
-							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
+							socket.broadcast.emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/wizz" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 						}else{
 							for(var i=0;i<pseudos.length;i++){
 								if(pseudos[i]==destinataire){
 									if(io.sockets.connected[socketId[i]]!="undefined"){
 										io.sockets.connected[socketId[i]].emit('wizz');
-										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
+										io.sockets.connected[socketId[i]].emit('message', {pseudo: '', destinataire: destinataire, message: message, type: "/wizz" , date: moment(dat).format("HH:mm:ss"), debut: true, divers: ""});
 									}
 								}
 							}
