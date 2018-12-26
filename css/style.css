@@ -78,7 +78,10 @@ body{
 /****** Tout ce qui est dans l'envoi de message (formulaire) ******/
 
 #avatar {
-	height:100px;
+	object-fit: cover;
+    object-position: center;
+    height: 100px;
+    width: 100px;
 }
 .height_avatar {
 	height:100px;
@@ -147,7 +150,10 @@ body{
 	line-height: 50px;
 }
 .avatarMini {
-	height:50px;
+	object-fit: cover;
+    object-position: center;
+    height: 50px;
+    width: 50px;
 }
 .pseudoMini {
 

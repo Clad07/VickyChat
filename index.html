@@ -775,7 +775,7 @@
 	
 						
 	function appendClient(pseudo, url){
-		$('#zone_util').append('<div class="col-12 col-sm-6 col-md-12"><div class="clicClient boutonHover row" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><div class="col-4"><img class="avatarMini" src="'+url+'"></div><div class="pseudoMini col-8">'+ pseudo + '</div></div></div>');
+		$('#zone_util').append('<div class="col-12 col-sm-6 col-md-12"><div class="clicClient boutonHover row" id="zone_util' + pseudo + '" onclick="clicClient(\'' + pseudo + '\')"><div class="col-4"><center><img class="avatarMini" src="'+url+'"></center></div><div class="pseudoMini col-8">'+ pseudo + '</div></div></div>');
 		$('#combo').append('<option id="combo' + pseudo + '" value="' + pseudo + '">' + pseudo + '</option>');
 	}
 						
@@ -972,11 +972,12 @@
 	/** code for Push Notifications **/
 	function notifyMe(title, body, icon) {
 		body = decode(body);
+
 		// Voyons si le navigateur supporte les notifications
 		if (!("Notification" in window)) {
 			alert("Ce navigateur ne supporte pas les notifications desktop");
 		}
-
+		
 		// Voyons si l'utilisateur est OK pour recevoir des notifications
 		else if (Notification.permission === "granted") {
 			// Si c'est ok, créons une notification

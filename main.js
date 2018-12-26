@@ -54,6 +54,9 @@
   "devDependencies": {
     "electron": "^3.0.10",
     "electron-packager": "^12.1.0"
+  },
+  "build": {
+    "appId": "com.vickychat.id"
   }
 }
 */
@@ -86,6 +89,7 @@ function createWindow () {
 
   // and load the index.html of the appElec.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
+  //mainWindow.loadURL(`https://vickychat.herokuapp.com/`)
   /*mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
 		protocol: 'file:',
@@ -107,7 +111,14 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-appElec.on('ready', createWindow)
+//appElec.on('ready', createWindow)
+appElec.on('ready', () => {
+    createWindow();
+    if (process.platform == 'win32') {
+        appElec.setAppUserModelId(process.execPath);
+        //appElec.setAppUserModelId("com.vickychat.id");
+    }
+});
 
 // Quit when all windows are closed.
 appElec.on('window-all-closed', function () {
@@ -129,5 +140,7 @@ appElec.on('activate', function () {
 // In this file you can include the rest of your appElec's specific main process
 // code. You can also put them in separate files and require them here.
 
+//for notification on electron
+//appElec.setAppUserModelId(process.execPath);
 
 //var myappElec = require('./app.js');
